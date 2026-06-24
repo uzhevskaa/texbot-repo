@@ -10,33 +10,89 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WidgetBotIdRouteImport } from './routes/widget.$botId'
+import { Route as EmbedBotIdRouteImport } from './routes/embed.$botId'
+import { Route as ChatBotIdRouteImport } from './routes/chat.$botId'
+import { Route as BuilderBotIdRouteImport } from './routes/builder.$botId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WidgetBotIdRoute = WidgetBotIdRouteImport.update({
+  id: '/widget/$botId',
+  path: '/widget/$botId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmbedBotIdRoute = EmbedBotIdRouteImport.update({
+  id: '/embed/$botId',
+  path: '/embed/$botId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatBotIdRoute = ChatBotIdRouteImport.update({
+  id: '/chat/$botId',
+  path: '/chat/$botId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuilderBotIdRoute = BuilderBotIdRouteImport.update({
+  id: '/builder/$botId',
+  path: '/builder/$botId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/builder/$botId': typeof BuilderBotIdRoute
+  '/chat/$botId': typeof ChatBotIdRoute
+  '/embed/$botId': typeof EmbedBotIdRoute
+  '/widget/$botId': typeof WidgetBotIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/builder/$botId': typeof BuilderBotIdRoute
+  '/chat/$botId': typeof ChatBotIdRoute
+  '/embed/$botId': typeof EmbedBotIdRoute
+  '/widget/$botId': typeof WidgetBotIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/builder/$botId': typeof BuilderBotIdRoute
+  '/chat/$botId': typeof ChatBotIdRoute
+  '/embed/$botId': typeof EmbedBotIdRoute
+  '/widget/$botId': typeof WidgetBotIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/builder/$botId'
+    | '/chat/$botId'
+    | '/embed/$botId'
+    | '/widget/$botId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/builder/$botId'
+    | '/chat/$botId'
+    | '/embed/$botId'
+    | '/widget/$botId'
+  id:
+    | '__root__'
+    | '/'
+    | '/builder/$botId'
+    | '/chat/$botId'
+    | '/embed/$botId'
+    | '/widget/$botId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuilderBotIdRoute: typeof BuilderBotIdRoute
+  ChatBotIdRoute: typeof ChatBotIdRoute
+  EmbedBotIdRoute: typeof EmbedBotIdRoute
+  WidgetBotIdRoute: typeof WidgetBotIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +104,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/widget/$botId': {
+      id: '/widget/$botId'
+      path: '/widget/$botId'
+      fullPath: '/widget/$botId'
+      preLoaderRoute: typeof WidgetBotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/embed/$botId': {
+      id: '/embed/$botId'
+      path: '/embed/$botId'
+      fullPath: '/embed/$botId'
+      preLoaderRoute: typeof EmbedBotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/$botId': {
+      id: '/chat/$botId'
+      path: '/chat/$botId'
+      fullPath: '/chat/$botId'
+      preLoaderRoute: typeof ChatBotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/builder/$botId': {
+      id: '/builder/$botId'
+      path: '/builder/$botId'
+      fullPath: '/builder/$botId'
+      preLoaderRoute: typeof BuilderBotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuilderBotIdRoute: BuilderBotIdRoute,
+  ChatBotIdRoute: ChatBotIdRoute,
+  EmbedBotIdRoute: EmbedBotIdRoute,
+  WidgetBotIdRoute: WidgetBotIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
