@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WidgetBotIdRouteImport } from './routes/widget.$botId'
 import { Route as EmbedBotIdRouteImport } from './routes/embed.$botId'
 import { Route as ChatBotIdRouteImport } from './routes/chat.$botId'
 import { Route as BuilderBotIdRouteImport } from './routes/builder.$botId'
 
+const BuilderRoute = BuilderRouteImport.update({
+  id: '/builder',
+  path: '/builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -36,13 +42,14 @@ const ChatBotIdRoute = ChatBotIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuilderBotIdRoute = BuilderBotIdRouteImport.update({
-  id: '/builder/$botId',
-  path: '/builder/$botId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$botId',
+  path: '/$botId',
+  getParentRoute: () => BuilderRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRouteWithChildren
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRouteWithChildren
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRouteWithChildren
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -67,6 +76,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/builder'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -74,6 +84,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/builder'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -81,6 +92,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/builder'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -89,7 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BuilderBotIdRoute: typeof BuilderBotIdRoute
+  BuilderRoute: typeof BuilderRouteWithChildren
   ChatBotIdRoute: typeof ChatBotIdRoute
   EmbedBotIdRoute: typeof EmbedBotIdRoute
   WidgetBotIdRoute: typeof WidgetBotIdRoute
@@ -97,6 +109,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/builder': {
+      id: '/builder'
+      path: '/builder'
+      fullPath: '/builder'
+      preLoaderRoute: typeof BuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -127,17 +146,28 @@ declare module '@tanstack/react-router' {
     }
     '/builder/$botId': {
       id: '/builder/$botId'
-      path: '/builder/$botId'
+      path: '/$botId'
       fullPath: '/builder/$botId'
       preLoaderRoute: typeof BuilderBotIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BuilderRoute
     }
   }
 }
 
+interface BuilderRouteChildren {
+  BuilderBotIdRoute: typeof BuilderBotIdRoute
+}
+
+const BuilderRouteChildren: BuilderRouteChildren = {
+  BuilderBotIdRoute: BuilderBotIdRoute,
+}
+
+const BuilderRouteWithChildren =
+  BuilderRoute._addFileChildren(BuilderRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BuilderBotIdRoute: BuilderBotIdRoute,
+  BuilderRoute: BuilderRouteWithChildren,
   ChatBotIdRoute: ChatBotIdRoute,
   EmbedBotIdRoute: EmbedBotIdRoute,
   WidgetBotIdRoute: WidgetBotIdRoute,

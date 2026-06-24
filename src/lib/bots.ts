@@ -1,5 +1,7 @@
 export type Message = { id: string; role: "user" | "assistant"; content: string; ts: number };
 
+export type BotStatus = "active" | "inactive";
+
 export type Bot = {
   id: string;
   name: string;
@@ -8,7 +10,9 @@ export type Bot = {
   documentText: string;
   createdAt: number;
   messages: Message[];
+  status: BotStatus;
 };
+
 
 const KEY = "chatbot-builder:bots";
 
@@ -16,7 +20,8 @@ export function loadBots(): Bot[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Bot[]) : [];
+    const bots = raw ? (JSON.parse(raw) as Bot[]) : [];
+    return bots.map((b) => ({ ...b, status: b.status ?? "active" }));
   } catch {
     return [];
   }

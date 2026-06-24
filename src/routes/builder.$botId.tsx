@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { getBot, upsertBot, uid, type Bot } from "@/lib/bots";
+import { Switch } from "@/components/ui/switch";
+import { getBot, upsertBot, uid, type Bot, type BotStatus } from "@/lib/bots";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/builder/$botId")({
@@ -23,6 +24,7 @@ function Builder() {
   const [company, setCompany] = useState("");
   const [docName, setDocName] = useState("");
   const [docText, setDocText] = useState("");
+  const [status, setStatus] = useState<BotStatus>("active");
   const [dragging, setDragging] = useState(false);
   const [existing, setExisting] = useState<Bot | undefined>();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -40,6 +42,7 @@ function Builder() {
     setCompany(bot.company);
     setDocName(bot.documentName);
     setDocText(bot.documentText);
+    setStatus(bot.status ?? "active");
   }, [botId, isNew, navigate]);
 
   async function handleFile(file: File) {
@@ -75,6 +78,7 @@ function Builder() {
       documentText: docText,
       createdAt: existing?.createdAt ?? Date.now(),
       messages: existing?.messages ?? [],
+      status,
     };
     upsertBot(bot);
     toast.success(isNew ? "Chatbot created!" : "Chatbot updated");
@@ -184,6 +188,18 @@ function Builder() {
                   </button>
                 </div>
               )}
+            </div>
+
+            <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-3">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-medium">Active on dashboard</span>
+                <span className="text-xs text-muted-foreground">Inactive bots won't show as live in the dashboard.</span>
+              </div>
+              <Switch
+                id="status"
+                checked={status === "active"}
+                onCheckedChange={(checked) => setStatus(checked ? "active" : "inactive")}
+              />
             </div>
 
             <div className="flex items-center justify-end gap-2 border-t pt-6">
