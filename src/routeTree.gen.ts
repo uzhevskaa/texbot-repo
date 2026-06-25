@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WidgetDotjsRouteImport } from './routes/widget[.]js'
 import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WidgetBotIdRouteImport } from './routes/widget.$botId'
@@ -16,6 +17,11 @@ import { Route as EmbedBotIdRouteImport } from './routes/embed.$botId'
 import { Route as ChatBotIdRouteImport } from './routes/chat.$botId'
 import { Route as BuilderBotIdRouteImport } from './routes/builder.$botId'
 
+const WidgetDotjsRoute = WidgetDotjsRouteImport.update({
+  id: '/widget.js',
+  path: '/widget.js',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuilderRoute = BuilderRouteImport.update({
   id: '/builder',
   path: '/builder',
@@ -50,6 +56,7 @@ const BuilderBotIdRoute = BuilderBotIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
+  '/widget.js': typeof WidgetDotjsRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
+  '/widget.js': typeof WidgetDotjsRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
+  '/widget.js': typeof WidgetDotjsRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/builder'
+    | '/widget.js'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/builder'
+    | '/widget.js'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/builder'
+    | '/widget.js'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuilderRoute: typeof BuilderRouteWithChildren
+  WidgetDotjsRoute: typeof WidgetDotjsRoute
   ChatBotIdRoute: typeof ChatBotIdRoute
   EmbedBotIdRoute: typeof EmbedBotIdRoute
   WidgetBotIdRoute: typeof WidgetBotIdRoute
@@ -109,6 +122,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/widget.js': {
+      id: '/widget.js'
+      path: '/widget.js'
+      fullPath: '/widget.js'
+      preLoaderRoute: typeof WidgetDotjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/builder': {
       id: '/builder'
       path: '/builder'
@@ -168,6 +188,7 @@ const BuilderRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuilderRoute: BuilderRouteWithChildren,
+  WidgetDotjsRoute: WidgetDotjsRoute,
   ChatBotIdRoute: ChatBotIdRoute,
   EmbedBotIdRoute: EmbedBotIdRoute,
   WidgetBotIdRoute: WidgetBotIdRoute,
