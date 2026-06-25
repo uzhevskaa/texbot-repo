@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Copy, Check, Sparkles, MessageCircle } from "lucide-react";
+import { ArrowLeft, Copy, Check, Sparkles, MessageCircle, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmbedWidget } from "@/components/EmbedWidget";
@@ -32,12 +32,20 @@ function WidgetPage() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
-  const snippet = `<!-- Botforge widget for ${bot.name} -->
+  const scriptSnippet = `<!-- Botforge widget for ${bot.name} -->
 <script src="${origin}/widget.js"></script>
 <script>initWidget({ botId: "${bot.id}" })</script>`;
 
+  const iframeSnippet = `<!-- Botforge iframe embed for ${bot.name} -->
+<iframe
+  src="${origin}/embed/${bot.id}"
+  title="${bot.name} chat"
+  style="width: 380px; height: 560px; max-width: 100%; border: 0; border-radius: 16px; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);"
+  allow="clipboard-write"
+></iframe>`;
+
   async function copy() {
-    await navigator.clipboard.writeText(snippet);
+    await navigator.clipboard.writeText(scriptSnippet);
     setCopied(true);
     toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 1800);
@@ -81,7 +89,30 @@ function WidgetPage() {
             </Button>
           </div>
           <pre className="overflow-x-auto bg-card p-5 text-xs leading-relaxed text-foreground">
-            <code>{snippet}</code>
+            <code>{scriptSnippet}</code>
+          </pre>
+        </Card>
+
+        <Card className="mt-6 overflow-hidden shadow-soft">
+          <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Code2 className="h-4 w-4" />
+              <span>iframe-fallback.html</span>
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={async () => {
+                await navigator.clipboard.writeText(iframeSnippet);
+                toast.success("Iframe code copied");
+              }}
+            >
+              <Copy className="mr-1 h-4 w-4" />
+              Copy iframe
+            </Button>
+          </div>
+          <pre className="overflow-x-auto bg-card p-5 text-xs leading-relaxed text-foreground">
+            <code>{iframeSnippet}</code>
           </pre>
         </Card>
 
