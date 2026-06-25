@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { EmbedWidget } from "@/components/EmbedWidget";
+import { ChatPanel } from "@/components/ChatPanel";
 import { getBot, type Bot } from "@/lib/bots";
 
 export const Route = createFileRoute("/embed/$botId")({
@@ -25,8 +25,8 @@ function EmbedPage() {
   if (!bot) return null;
 
   return (
-    <div className="min-h-screen bg-transparent">
-      <EmbedWidget botId={bot.id} />
+    <div className="h-screen w-screen bg-background">
+      <ChatPanel bot={bot} persist={false} className="h-full" />
     </div>
   );
 }

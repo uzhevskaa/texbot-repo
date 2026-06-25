@@ -31,18 +31,10 @@ function WidgetPage() {
   if (!bot) return null;
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const embedUrl = `${origin}/embed/${bot.id}`;
 
   const snippet = `<!-- Botforge widget for ${bot.name} -->
-<script>
-  (function(){
-    var iframe = document.createElement('iframe');
-    iframe.src = '${embedUrl}';
-    iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:420px;height:640px;max-width:100vw;max-height:100vh;border:0;z-index:2147483647;background:transparent;color-scheme:normal;';
-    iframe.allow = 'clipboard-write';
-    document.body.appendChild(iframe);
-  })();
-</script>`;
+<script src="${origin}/widget.js"></script>
+<script>initWidget({ botId: "${bot.id}" })</script>`;
 
   async function copy() {
     await navigator.clipboard.writeText(snippet);
