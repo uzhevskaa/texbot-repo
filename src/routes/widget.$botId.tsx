@@ -32,13 +32,34 @@ function WidgetPage() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
+  const payload = btoa(
+    unescape(
+      encodeURIComponent(
+        JSON.stringify({
+          id: bot.id,
+          name: bot.name,
+          company: bot.company,
+          documentName: bot.documentName,
+          documentText: bot.documentText,
+          createdAt: bot.createdAt,
+          status: bot.status,
+        }),
+      ),
+    ),
+  )
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+  const embedUrl = `${origin}/embed/${bot.id}?d=${payload}`;
+
   const scriptSnippet = `<!-- Botforge widget for ${bot.name} -->
 <script src="${origin}/widget.js"></script>
-<script>initWidget({ botId: "${bot.id}" })</script>`;
+<script>initWidget({ botId: "${bot.id}", embedUrl: "${embedUrl}" })</script>`;
 
   const iframeSnippet = `<!-- Botforge iframe embed for ${bot.name} -->
 <iframe
-  src="${origin}/embed/${bot.id}"
+  src="${embedUrl}"
   title="${bot.name} chat"
   style="width: 380px; height: 560px; max-width: 100%; border: 0; border-radius: 16px; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);"
   allow="clipboard-write"

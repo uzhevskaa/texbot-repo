@@ -19,8 +19,7 @@ function ChatPage() {
   useEffect(() => {
     const b = getBot(botId);
     if (!b) {
-      toast.error("Chatbot not found");
-      navigate({ to: "/" });
+      toast.error("Chatbot not found on this device");
       return;
     }
     setBot(b);
