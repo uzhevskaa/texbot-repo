@@ -19,6 +19,7 @@ export function createWidgetScript() {
     config = config || {};
     var botId = config.botId;
     var origin = config.origin || scriptOrigin;
+    var embedUrl = config.embedUrl || (origin.replace(/\\/$/, "") + "/embed/" + encodeURIComponent(botId));
     if (!botId) {
       console.error("[Botforge] initWidget requires a botId");
       return;
@@ -61,7 +62,7 @@ export function createWidgetScript() {
     function setOpen(next) {
       open = next;
       if (open) {
-        if (!iframe.src) iframe.src = origin.replace(/\\/$/, "") + "/embed/" + encodeURIComponent(botId);
+        if (!iframe.src) iframe.src = embedUrl;
         panel.style.transform = "scale(1)";
         panel.style.opacity = "1";
         panel.style.pointerEvents = "auto";
