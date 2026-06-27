@@ -27,6 +27,7 @@ function decodeBotParam(d: string | undefined): Bot | null {
       documentName: parsed.documentName ?? "",
       documentText: parsed.documentText ?? "",
       createdAt: parsed.createdAt ?? Date.now(),
+      updatedAt: parsed.updatedAt ?? parsed.createdAt ?? Date.now(),
       messages: [],
       status: parsed.status ?? "active",
     };

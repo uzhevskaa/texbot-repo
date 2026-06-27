@@ -42,6 +42,7 @@ function WidgetPage() {
           documentName: bot.documentName,
           documentText: bot.documentText,
           createdAt: bot.createdAt,
+          updatedAt: bot.updatedAt,
           status: bot.status,
         }),
       ),

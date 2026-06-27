@@ -9,6 +9,7 @@ export type Bot = {
   documentName: string;
   documentText: string;
   createdAt: number;
+  updatedAt: number;
   messages: Message[];
   status: BotStatus;
 };
@@ -20,7 +21,11 @@ export function loadBots(): Bot[] {
   try {
     const raw = window.localStorage.getItem(KEY);
     const bots = raw ? (JSON.parse(raw) as Bot[]) : [];
-    return bots.map((b) => ({ ...b, status: b.status ?? "active" }));
+    return bots.map((b) => ({
+      ...b,
+      updatedAt: b.updatedAt ?? b.createdAt,
+      status: b.status ?? "active",
+    }));
   } catch {
     return [];
   }

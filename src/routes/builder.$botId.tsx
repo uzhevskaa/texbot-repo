@@ -1,12 +1,22 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Upload, FileText, Sparkles, X } from "lucide-react";
+import { ArrowLeft, Upload, FileText, Sparkles, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { getBot, upsertBot, uid, type Bot, type BotStatus } from "@/lib/bots";
 import { toast } from "sonner";
 
@@ -27,7 +37,20 @@ function Builder() {
   const [status, setStatus] = useState<BotStatus>("active");
   const [dragging, setDragging] = useState(false);
   const [existing, setExisting] = useState<Bot | undefined>();
+  const [discardOpen, setDiscardOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const hasUnsavedChanges = isNew
+    ? Boolean(name.trim() || company.trim() || docName || docText || status !== "active")
+    : Boolean(
+        existing &&
+        (name !== existing.name ||
+          company !== existing.company ||
+          docName !== existing.documentName ||
+          docText !== existing.documentText ||
+          status !== (existing.status ?? "active")),
+      );
+  const canSave = isNew || hasUnsavedChanges;
 
   useEffect(() => {
     if (isNew) return;
@@ -44,6 +67,30 @@ function Builder() {
     setDocText(bot.documentText);
     setStatus(bot.status ?? "active");
   }, [botId, isNew, navigate]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  function leaveBuilder() {
+    navigate({ to: "/" });
+  }
+
+  function requestLeave() {
+    if (hasUnsavedChanges) {
+      setDiscardOpen(true);
+      return;
+    }
+    leaveBuilder();
+  }
 
   async function handleFile(file: File) {
     if (!file.name.toLowerCase().endsWith(".txt")) {
@@ -77,6 +124,7 @@ function Builder() {
       documentName: docName,
       documentText: docText,
       createdAt: existing?.createdAt ?? Date.now(),
+      updatedAt: Date.now(),
       messages: existing?.messages ?? [],
       status,
     };
@@ -88,15 +136,41 @@ function Builder() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-6 py-4">
-          <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-6 py-4">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={requestLeave}
+            className="-ml-2 text-muted-foreground hover:text-foreground"
+            aria-label="Back to dashboard"
+          >
             <ArrowLeft className="h-5 w-5" />
-          </Link>
+            Dashboard
+          </Button>
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
             <span className="font-semibold">{isNew ? "New chatbot" : "Edit chatbot"}</span>
+          </div>
+          <div className="hidden min-w-[7rem] justify-end sm:flex">
+            {!isNew && (
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                  hasUnsavedChanges
+                    ? "bg-amber-500/10 text-amber-600"
+                    : "bg-emerald-500/10 text-emerald-600"
+                }`}
+              >
+                {hasUnsavedChanges ? (
+                  <AlertCircle className="h-3.5 w-3.5" />
+                ) : (
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                )}
+                {hasUnsavedChanges ? "Unsaved changes" : "Saved"}
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -213,23 +287,61 @@ function Builder() {
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t pt-6">
-              <Link to="/">
-                <Button type="button" variant="ghost">
+            <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-xs text-muted-foreground">
+                {!isNew && (
+                  <span
+                    className={`inline-flex items-center gap-1.5 ${
+                      hasUnsavedChanges ? "text-amber-600" : "text-emerald-600"
+                    }`}
+                  >
+                    {hasUnsavedChanges ? (
+                      <AlertCircle className="h-3.5 w-3.5" />
+                    ) : (
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    )}
+                    {hasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <Button type="button" variant="ghost" onClick={requestLeave}>
                   Cancel
                 </Button>
-              </Link>
-              <Button
-                type="submit"
-                size="lg"
-                className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
-              >
-                {isNew ? "Create chatbot" : "Save changes"}
-              </Button>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={!canSave}
+                  className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
+                >
+                  {isNew ? "Create chatbot" : "Save changes"}
+                </Button>
+              </div>
             </div>
           </form>
         </Card>
       </main>
+
+      <AlertDialog open={discardOpen} onOpenChange={setDiscardOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Discard unsaved changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your edits to this chatbot have not been saved. If you leave now, those changes will
+              be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={leaveBuilder}
+            >
+              Discard changes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

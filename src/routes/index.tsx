@@ -9,10 +9,30 @@ import {
   Sparkles,
   Power,
   Pencil,
+  MoreHorizontal,
+  FileText,
+  MessageCircle,
+  CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { loadBots, deleteBot, type Bot } from "@/lib/bots";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { loadBots, deleteBot, upsertBot, type Bot } from "@/lib/bots";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
@@ -36,10 +56,19 @@ function Dashboard() {
     setBots(loadBots());
   }, []);
 
-  function handleDelete(id: string, name: string) {
-    deleteBot(id);
+  function handleDelete(bot: Bot) {
+    deleteBot(bot.id);
     setBots(loadBots());
-    toast.success(`Deleted "${name}"`);
+    toast.success(`Deleted "${bot.name}"`, {
+      action: {
+        label: "Undo",
+        onClick: () => {
+          upsertBot(bot);
+          setBots(loadBots());
+          toast.success(`Restored "${bot.name}"`);
+        },
+      },
+    });
   }
 
   return (
@@ -105,15 +134,22 @@ function EmptyState() {
   );
 }
 
-function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string, name: string) => void }) {
-  const date = new Date(bot.createdAt).toLocaleDateString(undefined, {
+function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (bot: Bot) => void }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const createdDate = new Date(bot.createdAt).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+  const updatedDate = new Date(bot.updatedAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const messageCount = bot.messages?.length ?? 0;
   const isActive = bot.status === "active";
   return (
-    <Card className="group flex flex-col gap-5 border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elegant">
+    <Card className="flex flex-col gap-5 border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elegant">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
@@ -124,27 +160,79 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string, name: str
             <p className="truncate text-xs text-muted-foreground">{bot.company}</p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-1 opacity-0 transition-all group-hover:opacity-100">
-          <Link
-            to="/builder/$botId"
-            params={{ botId: bot.id }}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            aria-label="Edit chatbot"
-          >
-            <Pencil className="h-4 w-4" />
-          </Link>
-          <button
-            onClick={() => onDelete(bot.id, bot.name)}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-            aria-label="Delete chatbot"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground"
+                aria-label="Open chatbot actions"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to="/builder/$botId" params={{ botId: bot.id }}>
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                onSelect={() => setDeleteOpen(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {bot.name}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will remove the chatbot, its knowledge file, and saved chat history from this
+                device. You can undo it right after deletion.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => {
+                  onDelete(bot);
+                  setDeleteOpen(false);
+                }}
+              >
+                Delete chatbot
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+        <div className="flex min-w-0 items-center gap-2">
+          <FileText className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{bot.documentName}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <span className="inline-flex min-w-0 items-center gap-1.5">
+            <CalendarDays className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">Updated {updatedDate}</span>
+          </span>
+          <span className="inline-flex min-w-0 items-center gap-1.5">
+            <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">
+              {messageCount} {messageCount === 1 ? "message" : "messages"}
+            </span>
+          </span>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-        <span>Created {date}</span>
+        <span>Created {createdDate}</span>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-medium ${isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}
         >
