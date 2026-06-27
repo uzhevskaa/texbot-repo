@@ -16,6 +16,7 @@ import { Route as WidgetBotIdRouteImport } from './routes/widget.$botId'
 import { Route as EmbedBotIdRouteImport } from './routes/embed.$botId'
 import { Route as ChatBotIdRouteImport } from './routes/chat.$botId'
 import { Route as BuilderBotIdRouteImport } from './routes/builder.$botId'
+import { Route as BotBotIdRouteImport } from './routes/bot.$botId'
 
 const WidgetDotjsRoute = WidgetDotjsRouteImport.update({
   id: '/widget.js',
@@ -52,11 +53,17 @@ const BuilderBotIdRoute = BuilderBotIdRouteImport.update({
   path: '/$botId',
   getParentRoute: () => BuilderRoute,
 } as any)
+const BotBotIdRoute = BotBotIdRouteImport.update({
+  id: '/bot/$botId',
+  path: '/bot/$botId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
   '/widget.js': typeof WidgetDotjsRoute
+  '/bot/$botId': typeof BotBotIdRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
   '/widget.js': typeof WidgetDotjsRoute
+  '/bot/$botId': typeof BotBotIdRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRouteWithChildren
   '/widget.js': typeof WidgetDotjsRoute
+  '/bot/$botId': typeof BotBotIdRoute
   '/builder/$botId': typeof BuilderBotIdRoute
   '/chat/$botId': typeof ChatBotIdRoute
   '/embed/$botId': typeof EmbedBotIdRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/builder'
     | '/widget.js'
+    | '/bot/$botId'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/builder'
     | '/widget.js'
+    | '/bot/$botId'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/builder'
     | '/widget.js'
+    | '/bot/$botId'
     | '/builder/$botId'
     | '/chat/$botId'
     | '/embed/$botId'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuilderRoute: typeof BuilderRouteWithChildren
   WidgetDotjsRoute: typeof WidgetDotjsRoute
+  BotBotIdRoute: typeof BotBotIdRoute
   ChatBotIdRoute: typeof ChatBotIdRoute
   EmbedBotIdRoute: typeof EmbedBotIdRoute
   WidgetBotIdRoute: typeof WidgetBotIdRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuilderBotIdRouteImport
       parentRoute: typeof BuilderRoute
     }
+    '/bot/$botId': {
+      id: '/bot/$botId'
+      path: '/bot/$botId'
+      fullPath: '/bot/$botId'
+      preLoaderRoute: typeof BotBotIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -189,6 +209,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuilderRoute: BuilderRouteWithChildren,
   WidgetDotjsRoute: WidgetDotjsRoute,
+  BotBotIdRoute: BotBotIdRoute,
   ChatBotIdRoute: ChatBotIdRoute,
   EmbedBotIdRoute: EmbedBotIdRoute,
   WidgetBotIdRoute: WidgetBotIdRoute,

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Pencil, Code2 } from "lucide-react";
+import { ArrowLeft, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatPanel } from "@/components/ChatPanel";
 import { getBot, type Bot } from "@/lib/bots";
@@ -32,17 +32,17 @@ function ChatPage() {
       <header className="border-b bg-card/60 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">
+            <Link
+              to="/bot/$botId"
+              params={{ botId: bot.id }}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
               <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm">Bot overview</span>
             </Link>
             <div className="text-sm font-semibold">{bot.name}</div>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/builder/$botId" params={{ botId: bot.id }}>
-              <Button variant="ghost" size="sm">
-                <Pencil className="mr-1 h-4 w-4" /> Edit
-              </Button>
-            </Link>
             <Link to="/widget/$botId" params={{ botId: bot.id }}>
               <Button variant="outline" size="sm">
                 <Code2 className="mr-1 h-4 w-4" /> Widget

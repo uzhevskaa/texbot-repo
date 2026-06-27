@@ -36,20 +36,11 @@ function Builder() {
   const [docText, setDocText] = useState("");
   const [status, setStatus] = useState<BotStatus>("active");
   const [dragging, setDragging] = useState(false);
-  const [existing, setExisting] = useState<Bot | undefined>();
   const [discardOpen, setDiscardOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const hasUnsavedChanges = isNew
-    ? Boolean(name.trim() || company.trim() || docName || docText || status !== "active")
-    : Boolean(
-        existing &&
-        (name !== existing.name ||
-          company !== existing.company ||
-          docName !== existing.documentName ||
-          docText !== existing.documentText ||
-          status !== (existing.status ?? "active")),
-      );
+  const hasUnsavedChanges =
+    isNew && Boolean(name.trim() || company.trim() || docName || docText || status !== "active");
   const canSave = isNew || hasUnsavedChanges;
 
   useEffect(() => {
@@ -60,12 +51,7 @@ function Builder() {
       navigate({ to: "/" });
       return;
     }
-    setExisting(bot);
-    setName(bot.name);
-    setCompany(bot.company);
-    setDocName(bot.documentName);
-    setDocText(bot.documentText);
-    setStatus(bot.status ?? "active");
+    navigate({ to: "/bot/$botId", params: { botId: bot.id } });
   }, [botId, isNew, navigate]);
 
   useEffect(() => {
@@ -81,7 +67,11 @@ function Builder() {
   }, [hasUnsavedChanges]);
 
   function leaveBuilder() {
-    navigate({ to: "/" });
+    if (isNew) {
+      navigate({ to: "/" });
+      return;
+    }
+    navigate({ to: "/bot/$botId", params: { botId } });
   }
 
   function requestLeave() {
@@ -118,14 +108,14 @@ function Builder() {
       return;
     }
     const bot: Bot = {
-      id: existing?.id ?? uid(),
+      id: uid(),
       name: name.trim(),
       company: company.trim(),
       documentName: docName,
       documentText: docText,
-      createdAt: existing?.createdAt ?? Date.now(),
+      createdAt: Date.now(),
       updatedAt: Date.now(),
-      messages: existing?.messages ?? [],
+      messages: [],
       status,
     };
     upsertBot(bot);
@@ -143,16 +133,16 @@ function Builder() {
             size="sm"
             onClick={requestLeave}
             className="-ml-2 text-muted-foreground hover:text-foreground"
-            aria-label="Back to dashboard"
+            aria-label={isNew ? "Back to dashboard" : "Back to bot overview"}
           >
             <ArrowLeft className="h-5 w-5" />
-            Dashboard
+            {isNew ? "Dashboard" : "Bot overview"}
           </Button>
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="font-semibold">{isNew ? "New chatbot" : "Edit chatbot"}</span>
+            <span className="font-semibold">New chatbot</span>
           </div>
           <div className="hidden min-w-[7rem] justify-end sm:flex">
             {!isNew && (
@@ -177,9 +167,7 @@ function Builder() {
 
       <main className="mx-auto max-w-3xl px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {isNew ? "Build your chatbot" : "Edit your chatbot"}
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Build your chatbot</h1>
           <p className="mt-2 text-muted-foreground">
             Give it a personality and feed it knowledge. It'll start answering in seconds.
           </p>
@@ -314,7 +302,7 @@ function Builder() {
                   disabled={!canSave}
                   className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
                 >
-                  {isNew ? "Create chatbot" : "Save changes"}
+                  Create chatbot
                 </Button>
               </div>
             </div>

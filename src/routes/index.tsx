@@ -8,7 +8,6 @@ import {
   Trash2,
   Sparkles,
   Power,
-  Pencil,
   MoreHorizontal,
   FileText,
   MessageCircle,
@@ -28,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
+  DropdownMenuSeparator,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -71,6 +71,13 @@ function Dashboard() {
     });
   }
 
+  function handleToggleStatus(bot: Bot) {
+    const nextStatus = bot.status === "active" ? "inactive" : "active";
+    upsertBot({ ...bot, status: nextStatus, updatedAt: Date.now() });
+    setBots(loadBots());
+    toast.success(`"${bot.name}" is now ${nextStatus}`);
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
@@ -102,7 +109,12 @@ function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             {bots.map((bot) => (
-              <BotCard key={bot.id} bot={bot} onDelete={handleDelete} />
+              <BotCard
+                key={bot.id}
+                bot={bot}
+                onDelete={handleDelete}
+                onToggleStatus={handleToggleStatus}
+              />
             ))}
           </div>
         )}
@@ -134,18 +146,17 @@ function EmptyState() {
   );
 }
 
-function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (bot: Bot) => void }) {
+function BotCard({
+  bot,
+  onDelete,
+  onToggleStatus,
+}: {
+  bot: Bot;
+  onDelete: (bot: Bot) => void;
+  onToggleStatus: (bot: Bot) => void;
+}) {
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const createdDate = new Date(bot.createdAt).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  const updatedDate = new Date(bot.updatedAt).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const updatedDate = formatDateTime(bot.updatedAt);
   const messageCount = bot.messages?.length ?? 0;
   const isActive = bot.status === "active";
   return (
@@ -174,11 +185,16 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (bot: Bot) => void }) 
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link to="/builder/$botId" params={{ botId: bot.id }}>
-                  <Pencil className="h-4 w-4" />
-                  Edit
+                <Link to="/widget/$botId" params={{ botId: bot.id }} search={{ from: "dashboard" }}>
+                  <Code2 className="h-4 w-4" />
+                  Widget code
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onToggleStatus(bot)}>
+                <Power className="h-4 w-4" />
+                {isActive ? "Deactivate" : "Activate"}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-destructive focus:bg-destructive/10 focus:text-destructive"
                 onSelect={() => setDeleteOpen(true)}
@@ -213,26 +229,20 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (bot: Bot) => void }) 
       </div>
 
       <div className="flex flex-col gap-2 text-xs text-muted-foreground">
-        <div className="flex min-w-0 items-center gap-2">
-          <FileText className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate">{bot.documentName}</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <span className="inline-flex min-w-0 items-center gap-1.5">
-            <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">Updated {updatedDate}</span>
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <span className="inline-flex min-w-0 items-center gap-2">
+            <FileText className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{bot.documentName}</span>
           </span>
-          <span className="inline-flex min-w-0 items-center gap-1.5">
+          <span className="inline-flex shrink-0 items-center gap-1.5">
             <MessageCircle className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">
-              {messageCount} {messageCount === 1 ? "message" : "messages"}
-            </span>
+            <span>{messageCount}</span>
           </span>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-        <span>Created {createdDate}</span>
+        <span>Updated {updatedDate}</span>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-medium ${isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}
         >
@@ -242,20 +252,33 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (bot: Bot) => void }) 
       </div>
 
       <div className="mt-auto flex gap-2">
-        <Link to="/chat/$botId" params={{ botId: bot.id }} className="flex-1">
+        <Link to="/bot/$botId" params={{ botId: bot.id }} className="flex-1">
           <Button
             variant="default"
             className="w-full bg-gradient-brand text-primary-foreground shadow-soft"
           >
-            <MessageSquare className="mr-1 h-4 w-4" /> Chat
+            <BotIcon className="mr-1 h-4 w-4" /> Manage
           </Button>
         </Link>
-        <Link to="/widget/$botId" params={{ botId: bot.id }} className="flex-1">
+        <Link to="/chat/$botId" params={{ botId: bot.id }} className="flex-1">
           <Button variant="outline" className="w-full">
-            <Code2 className="mr-1 h-4 w-4" /> Get Widget Code
+            <MessageSquare className="mr-1 h-4 w-4" /> Test chat
           </Button>
         </Link>
       </div>
     </Card>
   );
+}
+
+function formatDateTime(value: number) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
+    .format(new Date(value))
+    .replace(",", "");
 }
