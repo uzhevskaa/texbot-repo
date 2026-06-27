@@ -1,6 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Upload, FileText, Sparkles, X, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Upload,
+  FileText,
+  Sparkles,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Power,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -261,18 +270,39 @@ function Builder() {
               )}
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-3">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">Active on dashboard</span>
-                <span className="text-xs text-muted-foreground">
-                  Inactive bots won't show as live in the dashboard.
-                </span>
+            <div className="rounded-lg border bg-muted/40 px-4 py-3">
+              <div className="mb-3 flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium">Status</span>
+                  <span className="text-xs text-muted-foreground">
+                    Control whether this bot appears as live.
+                  </span>
+                </div>
+                <Switch
+                  id="status"
+                  checked={status === "active"}
+                  onCheckedChange={(checked) => setStatus(checked ? "active" : "inactive")}
+                  className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-amber-500"
+                />
               </div>
-              <Switch
-                id="status"
-                checked={status === "active"}
-                onCheckedChange={(checked) => setStatus(checked ? "active" : "inactive")}
-              />
+
+              <div
+                className={`rounded-lg border px-4 py-3 text-sm ${
+                  status === "active"
+                    ? "border-emerald-500/20 bg-emerald-500/10"
+                    : "border-amber-500/20 bg-amber-500/10"
+                }`}
+              >
+                <div className="flex items-center gap-1.5 font-medium">
+                  <Power className="h-3.5 w-3.5" />
+                  {status === "active" ? "Active on dashboard" : "Inactive"}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {status === "active"
+                    ? "This bot will be marked as live and ready to test or embed."
+                    : "This bot will be paused in the dashboard, but its settings remain editable."}
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">

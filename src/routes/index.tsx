@@ -75,7 +75,14 @@ function Dashboard() {
     const nextStatus = bot.status === "active" ? "inactive" : "active";
     upsertBot({ ...bot, status: nextStatus, updatedAt: Date.now() });
     setBots(loadBots());
-    toast.success(`"${bot.name}" is now ${nextStatus}`);
+    if (nextStatus === "inactive") {
+      toast(`"${bot.name}" is now inactive`, {
+        className:
+          "border-slate-300 bg-slate-50 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100",
+      });
+      return;
+    }
+    toast.success(`"${bot.name}" is now active`);
   }
 
   return (
@@ -260,7 +267,12 @@ function BotCard({
             <BotIcon className="mr-1 h-4 w-4" /> Manage
           </Button>
         </Link>
-        <Link to="/chat/$botId" params={{ botId: bot.id }} className="flex-1">
+        <Link
+          to="/chat/$botId"
+          params={{ botId: bot.id }}
+          search={{ from: "dashboard" }}
+          className="flex-1"
+        >
           <Button variant="outline" className="w-full">
             <MessageSquare className="mr-1 h-4 w-4" /> Test chat
           </Button>

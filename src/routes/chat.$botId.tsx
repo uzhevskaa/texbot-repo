@@ -6,13 +6,19 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { getBot, type Bot } from "@/lib/bots";
 import { toast } from "sonner";
 
+type ChatSearch = { from?: "dashboard" };
+
 export const Route = createFileRoute("/chat/$botId")({
   head: () => ({ meta: [{ title: "Chat — Botforge" }] }),
+  validateSearch: (search: Record<string, unknown>): ChatSearch => ({
+    from: search.from === "dashboard" ? "dashboard" : undefined,
+  }),
   component: ChatPage,
 });
 
 function ChatPage() {
   const { botId } = Route.useParams();
+  const { from } = Route.useSearch();
   const navigate = useNavigate();
   const [bot, setBot] = useState<Bot | null>(null);
 
@@ -27,19 +33,31 @@ function ChatPage() {
 
   if (!bot) return null;
 
+  const backToDashboard = from === "dashboard";
+
   return (
     <div className="flex h-screen flex-col bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link
-              to="/bot/$botId"
-              params={{ botId: bot.id }}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span className="text-sm">Bot overview</span>
-            </Link>
+            {backToDashboard ? (
+              <Link
+                to="/"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span className="text-sm">Dashboard</span>
+              </Link>
+            ) : (
+              <Link
+                to="/bot/$botId"
+                params={{ botId: bot.id }}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span className="text-sm">Bot overview</span>
+              </Link>
+            )}
             <div className="text-sm font-semibold">{bot.name}</div>
           </div>
           <div className="flex items-center gap-2">

@@ -61,9 +61,19 @@ function WidgetPage() {
 
   const embedUrl = `${origin}/embed/${bot.id}?d=${payload}`;
 
+  const embedUrlLines = chunkString(embedUrl, 88)
+    .map((part, index) => `${index === 0 ? '      "' : '      + "'}${part}"`)
+    .join("\n");
+
   const scriptSnippet = `<!-- Botforge widget for ${bot.name} -->
 <script src="${origin}/widget.js"></script>
-<script>initWidget({ botId: "${bot.id}", embedUrl: "${embedUrl}" })</script>`;
+<script>
+  initWidget({
+    botId: "${bot.id}",
+    embedUrl:
+${embedUrlLines},
+  })
+</script>`;
 
   const iframeSnippet = `<!-- Botforge iframe embed for ${bot.name} -->
 <iframe
@@ -121,12 +131,12 @@ function WidgetPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          <div className="flex min-w-0 flex-col gap-6">
             <Card className="overflow-hidden shadow-soft">
               <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-chart-4/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-chart-2/70" />
                   <span className="ml-2">embed-snippet.html</span>
@@ -136,7 +146,7 @@ function WidgetPage() {
                   {copied ? "Copied" : "Copy"}
                 </Button>
               </div>
-              <pre className="overflow-x-auto bg-card p-5 text-xs leading-relaxed text-foreground">
+              <pre className="max-w-full whitespace-pre-wrap break-words bg-card p-5 text-xs leading-relaxed text-foreground">
                 <code>{scriptSnippet}</code>
               </pre>
             </Card>
@@ -159,13 +169,13 @@ function WidgetPage() {
                   Copy iframe
                 </Button>
               </div>
-              <pre className="overflow-x-auto bg-card p-5 text-xs leading-relaxed text-foreground">
+              <pre className="max-w-full whitespace-pre-wrap break-words bg-card p-5 text-xs leading-relaxed text-foreground">
                 <code>{iframeSnippet}</code>
               </pre>
             </Card>
           </div>
 
-          <Card className="flex items-start gap-4 border-dashed p-5 shadow-soft">
+          <Card className="flex self-start items-start gap-4 border-dashed p-5 shadow-soft">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
               <MessageCircle className="h-5 w-5" />
             </div>
@@ -183,4 +193,12 @@ function WidgetPage() {
       <EmbedWidget botId={bot.id} />
     </div>
   );
+}
+
+function chunkString(value: string, size: number) {
+  const chunks: string[] = [];
+  for (let index = 0; index < value.length; index += size) {
+    chunks.push(value.slice(index, index + size));
+  }
+  return chunks;
 }

@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Pencil,
   Power,
+  Rocket,
   Trash2,
   Upload,
   X,
@@ -152,7 +153,16 @@ function BotOverview() {
       status: checked ? "active" : "inactive",
       updatedAt: Date.now(),
     };
-    persistBot(nextBot, `${nextBot.name} is now ${checked ? "active" : "inactive"}`);
+    upsertBot(nextBot);
+    setBot(nextBot);
+    if (checked) {
+      toast.success(`${nextBot.name} is now active`);
+      return;
+    }
+    toast(`${nextBot.name} is now inactive`, {
+      className:
+        "border-slate-300 bg-slate-50 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100",
+    });
   }
 
   function handleDelete() {
@@ -208,29 +218,9 @@ function BotOverview() {
 
             <div className="flex min-w-0 items-center gap-2">
               <h1 className="truncate text-3xl font-bold tracking-tight">{bot.name}</h1>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground"
-                onClick={openDetailsDialog}
-                aria-label="Edit bot details"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
             </div>
             <div className="mt-2 flex max-w-2xl items-start gap-2">
               <p className="text-muted-foreground">{bot.company}</p>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="-mt-1 h-7 w-7 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground"
-                onClick={openDetailsDialog}
-                aria-label="Edit bot details"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
             </div>
           </div>
 
@@ -248,6 +238,23 @@ function BotOverview() {
               </Button>
             </Link>
             <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:bg-accent hover:text-foreground"
+                    onClick={openDetailsDialog}
+                    aria-label="Edit bot details"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Edit bot details</p>
+                </TooltipContent>
+              </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -330,7 +337,7 @@ function BotOverview() {
                   Basic usage and lifecycle details for this bot.
                 </p>
               </div>
-              <MessageCircle className="h-5 w-5 shrink-0 text-muted-foreground" />
+              <Rocket className="h-5 w-5 shrink-0 text-muted-foreground" />
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
