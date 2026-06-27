@@ -97,7 +97,7 @@ ${embedUrlLines},
           {backToDashboard ? (
             <Link
               to="/"
-              className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-5 w-5" />
               Dashboard
@@ -106,17 +106,17 @@ ${embedUrlLines},
             <Link
               to="/bot/$botId"
               params={{ botId: bot.id }}
-              className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-5 w-5" />
               Bot overview
             </Link>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="font-semibold">Embed widget</span>
+            <span className="truncate font-semibold">Embed widget</span>
           </div>
         </div>
       </header>
@@ -133,7 +133,7 @@ ${embedUrlLines},
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           <div className="flex min-w-0 flex-col gap-6">
-            <Card className="overflow-hidden shadow-soft">
+            <Card className="min-w-0 overflow-hidden shadow-soft">
               <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
@@ -151,7 +151,7 @@ ${embedUrlLines},
               </pre>
             </Card>
 
-            <Card className="overflow-hidden shadow-soft">
+            <Card className="min-w-0 overflow-hidden shadow-soft">
               <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Code2 className="h-4 w-4" />
@@ -175,7 +175,7 @@ ${embedUrlLines},
             </Card>
           </div>
 
-          <Card className="flex self-start items-start gap-4 border-dashed p-5 shadow-soft">
+          <Card className="flex min-w-0 self-start items-start gap-4 border-dashed p-5 shadow-soft">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
               <MessageCircle className="h-5 w-5" />
             </div>

@@ -11,7 +11,6 @@ import {
   MoreHorizontal,
   FileText,
   MessageCircle,
-  CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -59,7 +58,9 @@ function Dashboard() {
   function handleDelete(bot: Bot) {
     deleteBot(bot.id);
     setBots(loadBots());
-    toast.success(`Deleted "${bot.name}"`, {
+    toast(`Deleted "${bot.name}"`, {
+      className:
+        "border-slate-300 bg-slate-50 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100",
       action: {
         label: "Undo",
         onClick: () => {
@@ -88,15 +89,15 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
+          <Link to="/" className="flex min-w-0 items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="text-lg font-semibold tracking-tight">Botforge</span>
+            <span className="truncate text-lg font-semibold tracking-tight">Botforge</span>
           </Link>
-          <Link to="/builder">
-            <Button className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]">
+          <Link to="/builder" className="shrink-0">
+            <Button className="bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110">
               <Plus className="mr-1 h-4 w-4" /> Create new chatbot
             </Button>
           </Link>
@@ -114,7 +115,7 @@ function Dashboard() {
         {bots.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[repeat(3,minmax(0,1fr))]">
             {bots.map((bot) => (
               <BotCard
                 key={bot.id}
@@ -144,7 +145,7 @@ function EmptyState() {
       <Link to="/builder" className="mt-6">
         <Button
           size="lg"
-          className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
+          className="bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110"
         >
           <Plus className="mr-1 h-4 w-4" /> Create new chatbot
         </Button>
@@ -167,7 +168,7 @@ function BotCard({
   const messageCount = bot.messages?.length ?? 0;
   const isActive = bot.status === "active";
   return (
-    <Card className="flex flex-col gap-5 border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elegant">
+    <Card className="flex min-w-0 flex-col gap-5 border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elegant">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
@@ -262,7 +263,7 @@ function BotCard({
         <Link to="/bot/$botId" params={{ botId: bot.id }} className="flex-1">
           <Button
             variant="default"
-            className="w-full bg-gradient-brand text-primary-foreground shadow-soft"
+            className="w-full bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110"
           >
             <BotIcon className="mr-1 h-4 w-4" /> Manage
           </Button>

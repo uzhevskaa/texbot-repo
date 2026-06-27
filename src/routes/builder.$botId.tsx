@@ -129,47 +129,29 @@ function Builder() {
     };
     upsertBot(bot);
     toast.success(isNew ? "Chatbot created!" : "Chatbot updated");
-    navigate({ to: "/chat/$botId", params: { botId: bot.id } });
+    navigate({ to: "/bot/$botId", params: { botId: bot.id } });
   }
 
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={requestLeave}
-            className="-ml-2 text-muted-foreground hover:text-foreground"
+            className="-ml-2 h-auto shrink-0 px-2 py-1 text-muted-foreground hover:bg-transparent hover:text-foreground"
             aria-label={isNew ? "Back to dashboard" : "Back to bot overview"}
           >
             <ArrowLeft className="h-5 w-5" />
             {isNew ? "Dashboard" : "Bot overview"}
           </Button>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="font-semibold">New chatbot</span>
-          </div>
-          <div className="hidden min-w-[7rem] justify-end sm:flex">
-            {!isNew && (
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                  hasUnsavedChanges
-                    ? "bg-amber-500/10 text-amber-600"
-                    : "bg-emerald-500/10 text-emerald-600"
-                }`}
-              >
-                {hasUnsavedChanges ? (
-                  <AlertCircle className="h-3.5 w-3.5" />
-                ) : (
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                )}
-                {hasUnsavedChanges ? "Unsaved changes" : "Saved"}
-              </span>
-            )}
+            <span className="truncate font-semibold">New chatbot</span>
           </div>
         </div>
       </header>

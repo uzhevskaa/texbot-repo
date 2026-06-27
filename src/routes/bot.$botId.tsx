@@ -168,7 +168,9 @@ function BotOverview() {
   function handleDelete() {
     const deletedBot = bot;
     deleteBot(deletedBot.id);
-    toast.success(`Deleted "${deletedBot.name}"`, {
+    toast(`Deleted "${deletedBot.name}"`, {
+      className:
+        "border-slate-300 bg-slate-50 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100",
       action: {
         label: "Undo",
         onClick: () => {
@@ -187,23 +189,23 @@ function BotOverview() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <Link
             to="/"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-5 w-5" />
             Dashboard
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
               <BotIcon className="h-4 w-4" />
             </div>
-            <span className="font-semibold">Bot overview</span>
+            <span className="truncate font-semibold">Bot overview</span>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <section className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -224,7 +226,7 @@ function BotOverview() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Link to="/chat/$botId" params={{ botId: bot.id }}>
               <Button className="bg-gradient-brand text-primary-foreground shadow-soft">
                 <MessageCircle className="mr-1 h-4 w-4" />
@@ -276,8 +278,8 @@ function BotOverview() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-5 lg:grid-cols-[1.5fr_1fr]">
-          <Card className="p-6 shadow-soft">
+        <section className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+          <Card className="min-w-0 p-6 shadow-soft">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">Knowledge base</h2>
@@ -298,7 +300,7 @@ function BotOverview() {
             </div>
           </Card>
 
-          <Card className="p-6 shadow-soft">
+          <Card className="min-w-0 self-start p-6 shadow-soft">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">Status</h2>
@@ -329,7 +331,7 @@ function BotOverview() {
             </div>
           </Card>
 
-          <Card className="p-6 shadow-soft lg:col-span-2">
+          <Card className="min-w-0 p-6 shadow-soft lg:col-span-2">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">Activity</h2>

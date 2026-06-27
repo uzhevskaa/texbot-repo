@@ -38,12 +38,12 @@ function ChatPage() {
   return (
     <div className="flex h-screen flex-col bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
+          <div className="flex min-w-0 items-center gap-3">
             {backToDashboard ? (
               <Link
                 to="/"
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span className="text-sm">Dashboard</span>
@@ -52,15 +52,15 @@ function ChatPage() {
               <Link
                 to="/bot/$botId"
                 params={{ botId: bot.id }}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span className="text-sm">Bot overview</span>
               </Link>
             )}
-            <div className="text-sm font-semibold">{bot.name}</div>
+            <div className="truncate text-sm font-semibold">{bot.name}</div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Link to="/widget/$botId" params={{ botId: bot.id }}>
               <Button variant="outline" size="sm">
                 <Code2 className="mr-1 h-4 w-4" /> Widget
@@ -70,7 +70,7 @@ function ChatPage() {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-1 overflow-hidden px-0 sm:px-6 sm:py-6">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 overflow-hidden px-0 sm:px-6 sm:py-6">
         <div className="flex-1 overflow-hidden border bg-card sm:rounded-2xl sm:shadow-elegant">
           <ChatPanel bot={bot} />
         </div>
