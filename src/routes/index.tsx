@@ -37,7 +37,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Botforge — Build AI chatbots in minutes" },
+      { title: "Texbot — Build AI chatbots in minutes" },
       {
         name: "description",
         content:
@@ -94,7 +94,7 @@ function Dashboard() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="truncate text-lg font-semibold tracking-tight">Botforge</span>
+            <span className="truncate text-lg font-semibold tracking-tight">Texbot</span>
           </Link>
           <Link to="/builder" className="shrink-0">
             <Button className="bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110">
@@ -140,7 +140,7 @@ function EmptyState() {
       <h2 className="text-xl font-semibold">No chatbots yet</h2>
       <p className="mt-2 max-w-sm text-sm text-muted-foreground">
         Create your first AI assistant. Upload a .txt knowledge file, give it a name, and you're
-        live in seconds.
+        ready in seconds.
       </p>
       <Link to="/builder" className="mt-6">
         <Button

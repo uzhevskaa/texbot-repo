@@ -7,7 +7,7 @@ import { getBot, type Bot } from "@/lib/bots";
 type EmbedSearch = { d?: string };
 
 export const Route = createFileRoute("/embed/$botId")({
-  head: () => ({ meta: [{ title: "Embedded chat" }] }),
+  head: () => ({ meta: [{ title: "Embedded chat — Texbot" }] }),
   validateSearch: (s: Record<string, unknown>): EmbedSearch => ({
     d: typeof s.d === "string" ? s.d : undefined,
   }),

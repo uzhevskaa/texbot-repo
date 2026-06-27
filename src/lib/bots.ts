@@ -58,6 +58,10 @@ export function uid() {
 
 /** Naive simulated AI: search document for sentences containing query keywords. */
 export function simulateAnswer(bot: Bot, question: string): string {
+  if (bot.status === "inactive") {
+    return "This bot isn't accepting messages right now.";
+  }
+
   const q = question.toLowerCase();
   const stop = new Set([
     "the",

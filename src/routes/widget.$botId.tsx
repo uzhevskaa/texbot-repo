@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type WidgetSearch = { from?: "dashboard" };
 
 export const Route = createFileRoute("/widget/$botId")({
-  head: () => ({ meta: [{ title: "Embed widget — Botforge" }] }),
+  head: () => ({ meta: [{ title: "Embed widget — Texbot" }] }),
   validateSearch: (search: Record<string, unknown>): WidgetSearch => ({
     from: search.from === "dashboard" ? "dashboard" : undefined,
   }),
@@ -65,7 +65,7 @@ function WidgetPage() {
     .map((part, index) => `${index === 0 ? '      "' : '      + "'}${part}"`)
     .join("\n");
 
-  const scriptSnippet = `<!-- Botforge widget for ${bot.name} -->
+  const scriptSnippet = `<!-- Texbot widget for ${bot.name} -->
 <script src="${origin}/widget.js"></script>
 <script>
   initWidget({
@@ -75,7 +75,7 @@ ${embedUrlLines},
   })
 </script>`;
 
-  const iframeSnippet = `<!-- Botforge iframe embed for ${bot.name} -->
+  const iframeSnippet = `<!-- Texbot iframe embed for ${bot.name} -->
 <iframe
   src="${embedUrl}"
   title="${bot.name} chat"
@@ -182,8 +182,8 @@ ${embedUrlLines},
             <div className="text-sm">
               <div className="font-medium">Live preview</div>
               <p className="mt-0.5 text-muted-foreground">
-                The floating chat button in the bottom-right corner is the live widget. Click it to
-                try {bot.name}.
+                The floating chat button in the bottom-right corner is the embedded widget. Click it
+                to try {bot.name}.
               </p>
             </div>
           </Card>

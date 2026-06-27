@@ -17,6 +17,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
   const [typing, setTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isInactive = bot.status === "inactive";
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -28,7 +29,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
 
   function send() {
     const text = input.trim();
-    if (!text || typing) return;
+    if (!text || typing || isInactive) return;
     const userMsg: Message = { id: uid(), role: "user", content: text, ts: Date.now() };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -64,7 +65,19 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6">
-        {messages.length === 0 && (
+        {isInactive && (
+          <div className="mx-auto mb-6 flex max-w-md flex-col items-center text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+              <BotIcon className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-semibold">This bot is inactive</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              This bot isn't accepting messages right now.
+            </p>
+          </div>
+        )}
+
+        {messages.length === 0 && !isInactive && (
           <div className="mx-auto flex max-w-md flex-col items-center text-center">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-elegant">
               <BotIcon className="h-6 w-6" />
@@ -107,13 +120,14 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Message ${bot.name}…`}
+            placeholder={isInactive ? "This bot is inactive" : `Message ${bot.name}…`}
+            disabled={isInactive}
             className="h-11 rounded-full border-muted bg-background px-4 focus-visible:ring-primary"
           />
           <Button
             type="submit"
             size="icon"
-            disabled={!input.trim() || typing}
+            disabled={!input.trim() || typing || isInactive}
             className="h-11 w-11 shrink-0 rounded-full bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-105 disabled:opacity-50"
           >
             <Send className="h-4 w-4" />

@@ -1,8 +1,8 @@
 export function createWidgetScript() {
   return `(function () {
   "use strict";
-  if (window.__botforgeWidgetLoaded && window.initWidget) return;
-  window.__botforgeWidgetLoaded = true;
+  if (window.__texbotWidgetLoaded && window.initWidget) return;
+  window.__texbotWidgetLoaded = true;
 
   var scriptOrigin = (function () {
     try {
@@ -21,13 +21,13 @@ export function createWidgetScript() {
     var origin = config.origin || scriptOrigin;
     var embedUrl = config.embedUrl || (origin.replace(/\\/$/, "") + "/embed/" + encodeURIComponent(botId));
     if (!botId) {
-      console.error("[Botforge] initWidget requires a botId");
+      console.error("[Texbot] initWidget requires a botId");
       return;
     }
-    if (document.getElementById("botforge-widget-" + botId)) return;
+    if (document.getElementById("texbot-widget-" + botId)) return;
 
     var root = document.createElement("div");
-    root.id = "botforge-widget-" + botId;
+    root.id = "texbot-widget-" + botId;
     root.style.cssText =
       "position:fixed;bottom:20px;right:20px;z-index:2147483647;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;";
 

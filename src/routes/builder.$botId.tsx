@@ -30,7 +30,7 @@ import { getBot, upsertBot, uid, type Bot, type BotStatus } from "@/lib/bots";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/builder/$botId")({
-  head: () => ({ meta: [{ title: "Bot builder — Botforge" }] }),
+  head: () => ({ meta: [{ title: "Bot builder — Texbot" }] }),
   component: Builder,
 });
 
@@ -109,7 +109,7 @@ function Builder() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !company.trim()) {
-      toast.error("Name and company description are required");
+      toast.error("Chatbot name and company name are required");
       return;
     }
     if (!docText.trim()) {
@@ -160,7 +160,7 @@ function Builder() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Build your chatbot</h1>
           <p className="mt-2 text-muted-foreground">
-            Give it a personality and feed it knowledge. It'll start answering in seconds.
+            Give it a name and connect the knowledge it needs to answer.
           </p>
         </div>
 
@@ -178,14 +178,17 @@ function Builder() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="company">Company description</Label>
+              <Label htmlFor="company">Company name</Label>
               <Textarea
                 id="company"
-                placeholder="A friendly description of your company, product, and tone of voice."
+                placeholder="e.g. Acme Studio"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                rows={4}
+                rows={2}
               />
+              <p className="text-xs text-muted-foreground">
+                Used in the chat intro: “Trained on Acme Studio's knowledge.”
+              </p>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -257,7 +260,7 @@ function Builder() {
                 <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">Status</span>
                   <span className="text-xs text-muted-foreground">
-                    Control whether this bot appears as live.
+                    Control whether this bot accepts messages.
                   </span>
                 </div>
                 <Switch
@@ -277,12 +280,12 @@ function Builder() {
               >
                 <div className="flex items-center gap-1.5 font-medium">
                   <Power className="h-3.5 w-3.5" />
-                  {status === "active" ? "Active on dashboard" : "Inactive"}
+                  {status === "active" ? "Active" : "Inactive"}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {status === "active"
-                    ? "This bot will be marked as live and ready to test or embed."
-                    : "This bot will be paused in the dashboard, but its settings remain editable."}
+                    ? "This bot can answer messages in test chat and embedded widget."
+                    : "This bot will be saved, but won't accept messages until you activate it."}
                 </p>
               </div>
             </div>

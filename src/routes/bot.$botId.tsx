@@ -43,7 +43,7 @@ import { deleteBot, getBot, upsertBot, type Bot } from "@/lib/bots";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/bot/$botId")({
-  head: () => ({ meta: [{ title: "Bot overview — Botforge" }] }),
+  head: () => ({ meta: [{ title: "Bot overview — Texbot" }] }),
   component: BotOverview,
 });
 
@@ -93,7 +93,7 @@ function BotOverview() {
 
   function saveDetails() {
     if (!draftName.trim() || !draftCompany.trim()) {
-      toast.error("Name and company description are required");
+      toast.error("Chatbot name and company name are required");
       return;
     }
     persistBot(
@@ -305,7 +305,7 @@ function BotOverview() {
               <div>
                 <h2 className="text-lg font-semibold">Status</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Control whether this bot appears as live.
+                  Control whether this bot accepts messages.
                 </p>
               </div>
               <Switch
@@ -322,11 +322,11 @@ function BotOverview() {
                   : "border-amber-500/20 bg-amber-500/10"
               }`}
             >
-              <div className="font-medium">{isActive ? "Active on dashboard" : "Inactive"}</div>
+              <div className="font-medium">{isActive ? "Active" : "Inactive"}</div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {isActive
-                  ? "This bot is marked as live and ready to test or embed."
-                  : "This bot is paused in the dashboard, but its settings remain editable."}
+                  ? "This bot is answering messages in test chat and embedded widget."
+                  : "This bot is paused and won't accept messages until activated."}
               </p>
             </div>
           </Card>
@@ -368,7 +368,7 @@ function BotOverview() {
           <DialogHeader>
             <DialogTitle>Edit bot details</DialogTitle>
             <DialogDescription>
-              Update the name and company description for this bot.
+              Update the name and company shown in this bot's chat intro.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
@@ -381,13 +381,16 @@ function BotOverview() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="bot-company">Company description</Label>
+              <Label htmlFor="bot-company">Company name</Label>
               <Textarea
                 id="bot-company"
                 value={draftCompany}
                 onChange={(event) => setDraftCompany(event.target.value)}
-                rows={4}
+                rows={2}
               />
+              <p className="text-xs text-muted-foreground">
+                Used in the chat intro: “Trained on {draftCompany || "Acme Studio"}'s knowledge.”
+              </p>
             </div>
           </div>
           <DialogFooter>

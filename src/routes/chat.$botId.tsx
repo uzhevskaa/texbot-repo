@@ -9,7 +9,7 @@ import { toast } from "sonner";
 type ChatSearch = { from?: "dashboard" };
 
 export const Route = createFileRoute("/chat/$botId")({
-  head: () => ({ meta: [{ title: "Chat — Botforge" }] }),
+  head: () => ({ meta: [{ title: "Chat — Texbot" }] }),
   validateSearch: (search: Record<string, unknown>): ChatSearch => ({
     from: search.from === "dashboard" ? "dashboard" : undefined,
   }),
