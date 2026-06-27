@@ -60,7 +60,8 @@ function EmbedPage() {
           </div>
           <h1 className="text-base font-semibold">Chatbot not available</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            This chatbot could not be loaded on this domain. Re-copy the embed snippet from your dashboard so it includes the bot data.
+            This chatbot could not be loaded on this domain. Re-copy the embed snippet from your
+            dashboard so it includes the bot data.
           </p>
         </div>
       </div>

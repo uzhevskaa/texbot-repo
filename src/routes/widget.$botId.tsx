@@ -92,7 +92,9 @@ function WidgetPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Embed {bot.name} on your site</h1>
           <p className="mt-2 text-muted-foreground">
-            Copy the snippet below and paste it before <code className="rounded bg-muted px-1.5 py-0.5 text-xs">&lt;/body&gt;</code> on any page.
+            Copy the snippet below and paste it before{" "}
+            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">&lt;/body&gt;</code> on any
+            page.
           </p>
         </div>
 
@@ -144,7 +146,8 @@ function WidgetPage() {
           <div className="text-sm">
             <div className="font-medium">Live preview</div>
             <p className="mt-0.5 text-muted-foreground">
-              The floating chat button in the bottom-right corner is the live widget. Click it to try {bot.name}.
+              The floating chat button in the bottom-right corner is the live widget. Click it to
+              try {bot.name}.
             </p>
           </div>
         </Card>

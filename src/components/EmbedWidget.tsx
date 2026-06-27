@@ -20,7 +20,7 @@ export function EmbedWidget({ botId }: { botId: string }) {
       <div
         className={cn(
           "pointer-events-auto fixed bottom-24 right-6 z-40 w-[min(380px,calc(100vw-2rem))] origin-bottom-right overflow-hidden rounded-2xl border bg-card shadow-elegant transition-all",
-          open ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+          open ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0",
         )}
         style={{ height: "min(560px, calc(100vh - 8rem))" }}
       >

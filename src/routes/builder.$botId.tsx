@@ -138,7 +138,10 @@ function Builder() {
             <div className="flex flex-col gap-2">
               <Label>Knowledge base (.txt)</Label>
               <div
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragging(true);
+                }}
                 onDragLeave={() => setDragging(false)}
                 onDrop={(e) => {
                   e.preventDefault();
@@ -148,7 +151,9 @@ function Builder() {
                 }}
                 onClick={() => fileRef.current?.click()}
                 className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all ${
-                  dragging ? "border-primary bg-accent" : "border-border hover:border-primary hover:bg-accent/40"
+                  dragging
+                    ? "border-primary bg-accent"
+                    : "border-border hover:border-primary hover:bg-accent/40"
                 }`}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
@@ -181,7 +186,11 @@ function Builder() {
                   </div>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); setDocName(""); setDocText(""); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDocName("");
+                      setDocText("");
+                    }}
                     className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                   >
                     <X className="h-4 w-4" />
@@ -193,7 +202,9 @@ function Builder() {
             <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-3">
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium">Active on dashboard</span>
-                <span className="text-xs text-muted-foreground">Inactive bots won't show as live in the dashboard.</span>
+                <span className="text-xs text-muted-foreground">
+                  Inactive bots won't show as live in the dashboard.
+                </span>
               </div>
               <Switch
                 id="status"
@@ -204,7 +215,9 @@ function Builder() {
 
             <div className="flex items-center justify-end gap-2 border-t pt-6">
               <Link to="/">
-                <Button type="button" variant="ghost">Cancel</Button>
+                <Button type="button" variant="ghost">
+                  Cancel
+                </Button>
               </Link>
               <Button
                 type="submit"

@@ -13,7 +13,6 @@ export type Bot = {
   status: BotStatus;
 };
 
-
 const KEY = "chatbot-builder:bots";
 
 export function loadBots(): Bot[] {
@@ -56,10 +55,41 @@ export function uid() {
 export function simulateAnswer(bot: Bot, question: string): string {
   const q = question.toLowerCase();
   const stop = new Set([
-    "the","a","an","is","are","what","who","how","why","when","where","do","does",
-    "of","to","in","on","for","and","or","with","i","you","me","my","your","can","please","tell","about",
+    "the",
+    "a",
+    "an",
+    "is",
+    "are",
+    "what",
+    "who",
+    "how",
+    "why",
+    "when",
+    "where",
+    "do",
+    "does",
+    "of",
+    "to",
+    "in",
+    "on",
+    "for",
+    "and",
+    "or",
+    "with",
+    "i",
+    "you",
+    "me",
+    "my",
+    "your",
+    "can",
+    "please",
+    "tell",
+    "about",
   ]);
-  const keywords = q.replace(/[^\w\s]/g, " ").split(/\s+/).filter((w) => w.length > 2 && !stop.has(w));
+  const keywords = q
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !stop.has(w));
   const sentences = bot.documentText
     .replace(/\s+/g, " ")
     .split(/(?<=[.!?])\s+/)
@@ -76,9 +106,12 @@ export function simulateAnswer(bot: Bot, question: string): string {
     return { s, score };
   });
   scored.sort((a, b) => b.score - a.score);
-  const top = scored.filter((x) => x.score > 0).slice(0, 3).map((x) => x.s);
+  const top = scored
+    .filter((x) => x.score > 0)
+    .slice(0, 3)
+    .map((x) => x.s);
 
-  const greetings = ["hi","hello","hey","yo","greetings"];
+  const greetings = ["hi", "hello", "hey", "yo", "greetings"];
   if (keywords.length === 0 || greetings.some((g) => q.trim().startsWith(g))) {
     return `Hi there! I'm ${bot.name}, ${bot.company}'s assistant. Ask me anything about our company.`;
   }
