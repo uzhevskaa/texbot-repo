@@ -39,7 +39,28 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { deleteBot, getBot, upsertBot, type Bot } from "@/lib/bots";
+import {
+  BOT_THEME_OPTIONS,
+  BOT_TONE_OPTIONS,
+  DEFAULT_BOT_THEME,
+  DEFAULT_BOT_TONE,
+  deleteBot,
+  getBot,
+  getBotThemeOption,
+  upsertBot,
+  type Bot,
+  type BotThemeColor,
+  type BotTone,
+} from "@/lib/bots";
+import { cn } from "@/lib/utils";
+import {
+  brandStyles,
+  controlStyles,
+  interactionStyles,
+  statusStyles,
+  surfaceStyles,
+  typographyStyles,
+} from "@/lib/visual-styles";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/bot/$botId")({
@@ -56,6 +77,8 @@ function BotOverview() {
   const [baseOpen, setBaseOpen] = useState(false);
   const [draftName, setDraftName] = useState("");
   const [draftCompany, setDraftCompany] = useState("");
+  const [draftTone, setDraftTone] = useState<BotTone>("friendly");
+  const [draftThemeColor, setDraftThemeColor] = useState<BotThemeColor>("violet");
   const [draftDocName, setDraftDocName] = useState("");
   const [draftDocText, setDraftDocText] = useState("");
   const [dragging, setDragging] = useState(false);
@@ -78,6 +101,7 @@ function BotOverview() {
   const createdDate = formatDate(bot.createdAt);
   const updatedDate = formatDate(bot.updatedAt);
   const knowledgeSize = bot.documentText.length.toLocaleString();
+  const theme = getBotThemeOption(bot.themeColor);
 
   function persistBot(nextBot: Bot, message: string) {
     upsertBot(nextBot);
@@ -88,6 +112,8 @@ function BotOverview() {
   function openDetailsDialog() {
     setDraftName(bot.name);
     setDraftCompany(bot.company);
+    setDraftTone(bot.tone ?? DEFAULT_BOT_TONE);
+    setDraftThemeColor(bot.themeColor ?? DEFAULT_BOT_THEME);
     setDetailsOpen(true);
   }
 
@@ -101,6 +127,8 @@ function BotOverview() {
         ...bot,
         name: draftName.trim(),
         company: draftCompany.trim(),
+        tone: draftTone,
+        themeColor: draftThemeColor,
         updatedAt: Date.now(),
       },
       "Bot details updated",
@@ -195,10 +223,15 @@ function BotOverview() {
             Dashboard
           </Link>
           <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg",
+                theme.botAccentClass,
+              )}
+            >
               <BotIcon className="h-4 w-4" />
             </div>
-            <span className="truncate font-semibold">Bot overview</span>
+            <span className={cn("truncate", typographyStyles.navTitle)}>Bot overview</span>
           </div>
         </div>
       </header>
@@ -208,27 +241,27 @@ function BotOverview() {
           <div className="min-w-0 flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                  isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${typographyStyles.metaStrong} ${
+                  isActive ? statusStyles.active.badge : statusStyles.inactive.badge
                 }`}
               >
                 <Power className="h-3.5 w-3.5" />
                 {isActive ? "Active" : "Inactive"}
               </span>
-              <span className="text-xs text-muted-foreground">Updated {updatedDate}</span>
+              <span className={typographyStyles.meta}>Updated {updatedDate}</span>
             </div>
 
             <div className="flex min-w-0 items-center gap-2">
-              <h1 className="truncate text-3xl font-bold tracking-tight">{bot.name}</h1>
+              <h1 className={cn("truncate", typographyStyles.pageTitle)}>{bot.name}</h1>
             </div>
             <div className="mt-2 flex max-w-2xl items-start gap-2">
-              <p className="text-muted-foreground">{bot.company}</p>
+              <p className={typographyStyles.bodyMuted}>{bot.company}</p>
             </div>
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Link to="/chat/$botId" params={{ botId: bot.id }}>
-              <Button className="bg-gradient-brand text-primary-foreground shadow-soft">
+              <Button className={theme.buttonClass}>
                 <MessageCircle className="mr-1 h-4 w-4" />
                 Test chat
               </Button>
@@ -246,7 +279,7 @@ function BotOverview() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="text-muted-foreground hover:bg-accent hover:text-foreground"
+                    className={interactionStyles.iconButton}
                     onClick={openDetailsDialog}
                     aria-label="Edit bot details"
                   >
@@ -263,7 +296,7 @@ function BotOverview() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    className={interactionStyles.destructiveIconButton}
                     onClick={() => setDeleteOpen(true)}
                     aria-label="Delete bot"
                   >
@@ -279,11 +312,11 @@ function BotOverview() {
         </section>
 
         <section className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-          <Card className="min-w-0 p-6 shadow-soft">
+          <Card className={`min-w-0 p-6 ${surfaceStyles.card}`}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold">Knowledge base</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h2 className={typographyStyles.sectionTitle}>Knowledge base</h2>
+                <p className={cn("mt-1", typographyStyles.bodyMuted)}>
                   Source file and training content currently used by this chatbot.
                 </p>
               </div>
@@ -300,30 +333,28 @@ function BotOverview() {
             </div>
           </Card>
 
-          <Card className="min-w-0 self-start p-6 shadow-soft">
+          <Card className={`min-w-0 self-start p-6 ${surfaceStyles.card}`}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold">Status</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h2 className={typographyStyles.sectionTitle}>Status</h2>
+                <p className={cn("mt-1", typographyStyles.bodyMuted)}>
                   Control whether this bot accepts messages.
                 </p>
               </div>
               <Switch
                 checked={isActive}
                 onCheckedChange={handleStatusChange}
-                className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-amber-500"
+                className={`${statusStyles.active.switch} ${statusStyles.inactive.switch}`}
               />
             </div>
 
             <div
               className={`rounded-lg border px-4 py-3 text-sm ${
-                isActive
-                  ? "border-emerald-500/20 bg-emerald-500/10"
-                  : "border-amber-500/20 bg-amber-500/10"
+                isActive ? statusStyles.active.panel : statusStyles.inactive.panel
               }`}
             >
-              <div className="font-medium">{isActive ? "Active" : "Inactive"}</div>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <div className={typographyStyles.panelTitle}>{isActive ? "Active" : "Inactive"}</div>
+              <p className={cn("mt-1", typographyStyles.meta)}>
                 {isActive
                   ? "This bot is answering messages in test chat and embedded widget."
                   : "This bot is paused and won't accept messages until activated."}
@@ -331,11 +362,11 @@ function BotOverview() {
             </div>
           </Card>
 
-          <Card className="min-w-0 p-6 shadow-soft lg:col-span-2">
+          <Card className={`min-w-0 p-6 ${surfaceStyles.card} lg:col-span-2`}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold">Activity</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h2 className={typographyStyles.sectionTitle}>Activity</h2>
+                <p className={cn("mt-1", typographyStyles.bodyMuted)}>
                   Basic usage and lifecycle details for this bot.
                 </p>
               </div>
@@ -388,20 +419,68 @@ function BotOverview() {
                 onChange={(event) => setDraftCompany(event.target.value)}
                 rows={2}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className={typographyStyles.meta}>
                 Used in the chat intro: “Trained on {draftCompany || "Acme Studio"}'s knowledge.”
               </p>
+            </div>
+            <div className={`${surfaceStyles.softPanel} px-4 py-4`}>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <div className={typographyStyles.panelTitle}>Customization</div>
+                  <p className={cn("mt-1", typographyStyles.meta)}>Included in Bots' friend</p>
+                </div>
+                <span className={controlStyles.pill}>Bots' friend</span>
+              </div>
+
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label>Tone of voice</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {BOT_TONE_OPTIONS.map((option) => (
+                      <Button
+                        key={option.value}
+                        type="button"
+                        variant={draftTone === option.value ? "default" : "outline"}
+                        className={cn(
+                          "justify-center",
+                          draftTone === option.value && "shadow-soft",
+                        )}
+                        onClick={() => setDraftTone(option.value)}
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Color</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {BOT_THEME_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        aria-label={option.label}
+                        onClick={() => setDraftThemeColor(option.value)}
+                        className={cn(
+                          controlStyles.swatchButton,
+                          draftThemeColor === option.value &&
+                            "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+                        )}
+                      >
+                        <span className={cn(controlStyles.swatch, option.swatchClass)} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => setDetailsOpen(false)}>
               Cancel
             </Button>
-            <Button
-              type="button"
-              className="bg-gradient-brand text-primary-foreground shadow-soft"
-              onClick={saveDetails}
-            >
+            <Button type="button" className={brandStyles.button} onClick={saveDetails}>
               Save changes
             </Button>
           </DialogFooter>
@@ -429,19 +508,19 @@ function BotOverview() {
               if (file) handleBaseFile(file);
             }}
             onClick={() => fileRef.current?.click()}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all ${
+            className={`flex cursor-pointer flex-col items-center justify-center gap-2 ${surfaceStyles.dashedDropzone} ${
               dragging
                 ? "border-primary bg-accent"
                 : "border-border hover:border-primary hover:bg-accent/40"
             }`}
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+            <div className={controlStyles.iconTile}>
               <Upload className="h-5 w-5" />
             </div>
-            <div className="text-sm font-medium">
+            <div className={typographyStyles.panelTitle}>
               {draftDocName ? "Replace file" : "Click or drag a .txt file"}
             </div>
-            <div className="text-xs text-muted-foreground">Max 2MB</div>
+            <div className={typographyStyles.meta}>Max 2MB</div>
             <input
               ref={fileRef}
               type="file"
@@ -455,11 +534,11 @@ function BotOverview() {
           </div>
 
           {draftDocName && (
-            <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-3 py-2 text-sm">
+            <div className={`flex items-center justify-between text-sm ${surfaceStyles.fileRow}`}>
               <div className="flex min-w-0 items-center gap-2">
                 <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="truncate">{draftDocName}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">
+                <span className={cn("shrink-0", typographyStyles.meta)}>
                   ({draftDocText.length.toLocaleString()} chars)
                 </span>
               </div>
@@ -470,7 +549,7 @@ function BotOverview() {
                   setDraftDocName("");
                   setDraftDocText("");
                 }}
-                className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                className={cn("rounded p-1", interactionStyles.destructiveIconButton)}
                 aria-label="Remove selected file"
               >
                 <X className="h-4 w-4" />
@@ -485,7 +564,7 @@ function BotOverview() {
             <Button
               type="button"
               disabled={!draftDocText.trim()}
-              className="bg-gradient-brand text-primary-foreground shadow-soft"
+              className={brandStyles.button}
               onClick={saveBase}
             >
               Update base
@@ -521,20 +600,22 @@ function BotOverview() {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b pb-3 last:border-0 last:pb-0">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="min-w-0 truncate text-right text-sm font-medium">{value}</span>
+      <span className={typographyStyles.statLabel}>{label}</span>
+      <span className={cn("min-w-0 truncate text-right", typographyStyles.body, "font-medium")}>
+        {value}
+      </span>
     </div>
   );
 }
 
 function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-muted/40 p-4">
+    <div className={surfaceStyles.metricPanel}>
       <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
         {icon}
       </div>
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="mt-1 truncate text-lg font-semibold">{value}</div>
+      <div className={typographyStyles.statLabel}>{label}</div>
+      <div className={cn("mt-1 truncate", typographyStyles.statValue)}>{value}</div>
     </div>
   );
 }

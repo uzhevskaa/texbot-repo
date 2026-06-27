@@ -4,6 +4,8 @@ import { ArrowLeft, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatPanel } from "@/components/ChatPanel";
 import { getBot, type Bot } from "@/lib/bots";
+import { cn } from "@/lib/utils";
+import { typographyStyles } from "@/lib/visual-styles";
 import { toast } from "sonner";
 
 type ChatSearch = { from?: "dashboard" };
@@ -46,7 +48,7 @@ function ChatPage() {
                 className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft className="h-5 w-5" />
-                <span className="text-sm">Dashboard</span>
+                <span className={typographyStyles.body}>Dashboard</span>
               </Link>
             ) : (
               <Link
@@ -55,10 +57,10 @@ function ChatPage() {
                 className="flex shrink-0 items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft className="h-5 w-5" />
-                <span className="text-sm">Bot overview</span>
+                <span className={typographyStyles.body}>Bot overview</span>
               </Link>
             )}
-            <div className="truncate text-sm font-semibold">{bot.name}</div>
+            <div className={cn("truncate", typographyStyles.navTitle)}>{bot.name}</div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <Link to="/widget/$botId" params={{ botId: bot.id }}>

@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { ChatPanel } from "@/components/ChatPanel";
-import { getBot, type Bot } from "@/lib/bots";
+import { DEFAULT_BOT_THEME, DEFAULT_BOT_TONE, getBot, type Bot } from "@/lib/bots";
+import { brandStyles } from "@/lib/visual-styles";
 
 type EmbedSearch = { d?: string };
 
@@ -30,6 +31,8 @@ function decodeBotParam(d: string | undefined): Bot | null {
       updatedAt: parsed.updatedAt ?? parsed.createdAt ?? Date.now(),
       messages: [],
       status: parsed.status ?? "active",
+      tone: parsed.tone ?? DEFAULT_BOT_TONE,
+      themeColor: parsed.themeColor ?? DEFAULT_BOT_THEME,
     };
   } catch {
     return null;
@@ -56,7 +59,9 @@ function EmbedPage() {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background p-6">
         <div className="max-w-sm text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground">
+          <div
+            className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${brandStyles.icon}`}
+          >
             <MessageCircle className="h-6 w-6" />
           </div>
           <h1 className="text-base font-semibold">Chatbot not available</h1>

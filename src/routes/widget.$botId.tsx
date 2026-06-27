@@ -4,7 +4,14 @@ import { ArrowLeft, Copy, Check, Sparkles, MessageCircle, Code2 } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmbedWidget } from "@/components/EmbedWidget";
-import { getBot, type Bot } from "@/lib/bots";
+import { getBot, getBotThemeOption, type Bot } from "@/lib/bots";
+import { cn } from "@/lib/utils";
+import {
+  codePreviewStyles,
+  controlStyles,
+  surfaceStyles,
+  typographyStyles,
+} from "@/lib/visual-styles";
 import { toast } from "sonner";
 
 type WidgetSearch = { from?: "dashboard" };
@@ -38,6 +45,7 @@ function WidgetPage() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const backToDashboard = from === "dashboard";
+  const theme = getBotThemeOption(bot.themeColor);
 
   const payload = btoa(
     unescape(
@@ -51,6 +59,8 @@ function WidgetPage() {
           createdAt: bot.createdAt,
           updatedAt: bot.updatedAt,
           status: bot.status,
+          tone: bot.tone,
+          themeColor: bot.themeColor,
         }),
       ),
     ),
@@ -113,18 +123,23 @@ ${embedUrlLines},
             </Link>
           )}
           <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg",
+                theme.botAccentClass,
+              )}
+            >
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="truncate font-semibold">Embed widget</span>
+            <span className={cn("truncate", typographyStyles.navTitle)}>Embed widget</span>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Embed {bot.name} on your site</h1>
-          <p className="mt-2 text-muted-foreground">
+          <h1 className={typographyStyles.pageTitle}>Embed {bot.name} on your site</h1>
+          <p className={cn("mt-2", typographyStyles.bodyMuted)}>
             Copy the snippet below and paste it before{" "}
             <code className="rounded bg-muted px-1.5 py-0.5 text-xs">&lt;/body&gt;</code> on any
             page.
@@ -133,12 +148,22 @@ ${embedUrlLines},
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           <div className="flex min-w-0 flex-col gap-6">
-            <Card className="min-w-0 overflow-hidden shadow-soft">
-              <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-chart-4/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-chart-2/70" />
+            <Card className={`min-w-0 overflow-hidden ${surfaceStyles.card}`}>
+              <div className={`flex items-center justify-between ${surfaceStyles.codeHeader}`}>
+                <div
+                  className={cn(
+                    "flex items-center gap-2",
+                    typographyStyles.metaStrong,
+                    "text-muted-foreground",
+                  )}
+                >
+                  <span className={cn("h-2.5 w-2.5 rounded-full", theme.swatchClass)} />
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${codePreviewStyles.trafficDotMuted}`}
+                  />
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${codePreviewStyles.trafficDotAccent}`}
+                  />
                   <span className="ml-2">embed-snippet.html</span>
                 </div>
                 <Button size="sm" variant="ghost" onClick={copy}>
@@ -146,14 +171,25 @@ ${embedUrlLines},
                   {copied ? "Copied" : "Copy"}
                 </Button>
               </div>
-              <pre className="max-w-full whitespace-pre-wrap break-words bg-card p-5 text-xs leading-relaxed text-foreground">
+              <pre
+                className={cn(
+                  "max-w-full whitespace-pre-wrap break-words bg-card p-5",
+                  typographyStyles.code,
+                )}
+              >
                 <code>{scriptSnippet}</code>
               </pre>
             </Card>
 
-            <Card className="min-w-0 overflow-hidden shadow-soft">
-              <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <Card className={`min-w-0 overflow-hidden ${surfaceStyles.card}`}>
+              <div className={`flex items-center justify-between ${surfaceStyles.codeHeader}`}>
+                <div
+                  className={cn(
+                    "flex items-center gap-2",
+                    typographyStyles.metaStrong,
+                    "text-muted-foreground",
+                  )}
+                >
                   <Code2 className="h-4 w-4" />
                   <span>iframe-fallback.html</span>
                 </div>
@@ -169,19 +205,26 @@ ${embedUrlLines},
                   Copy iframe
                 </Button>
               </div>
-              <pre className="max-w-full whitespace-pre-wrap break-words bg-card p-5 text-xs leading-relaxed text-foreground">
+              <pre
+                className={cn(
+                  "max-w-full whitespace-pre-wrap break-words bg-card p-5",
+                  typographyStyles.code,
+                )}
+              >
                 <code>{iframeSnippet}</code>
               </pre>
             </Card>
           </div>
 
-          <Card className="flex min-w-0 self-start items-start gap-4 border-dashed p-5 shadow-soft">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+          <Card
+            className={`flex min-w-0 self-start items-start gap-4 border-dashed p-5 ${surfaceStyles.card}`}
+          >
+            <div className={controlStyles.iconTile}>
               <MessageCircle className="h-5 w-5" />
             </div>
-            <div className="text-sm">
-              <div className="font-medium">Live preview</div>
-              <p className="mt-0.5 text-muted-foreground">
+            <div className={typographyStyles.body}>
+              <div className={typographyStyles.panelTitle}>Live preview</div>
+              <p className={cn("mt-0.5", typographyStyles.bodyMuted)}>
                 The floating chat button in the bottom-right corner is the embedded widget. Click it
                 to try {bot.name}.
               </p>

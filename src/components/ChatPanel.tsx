@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Bot as BotIcon, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { simulateAnswer, type Bot, type Message, uid, upsertBot } from "@/lib/bots";
+import {
+  getBotThemeOption,
+  simulateAnswer,
+  type Bot,
+  type Message,
+  uid,
+  upsertBot,
+} from "@/lib/bots";
 import { cn } from "@/lib/utils";
+import { typographyStyles } from "@/lib/visual-styles";
 
 type Props = {
   bot: Bot;
@@ -18,6 +26,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isInactive = bot.status === "inactive";
+  const theme = getBotThemeOption(bot.themeColor);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -55,12 +64,17 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
   return (
     <div className={cn("flex h-full flex-col bg-card", className)}>
       <div className="flex items-center gap-3 border-b px-4 py-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-brand text-primary-foreground shadow-soft">
+        <div
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-full shadow-soft",
+            theme.botAccentClass,
+          )}
+        >
           <BotIcon className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold">{bot.name}</div>
-          <div className="truncate text-xs text-muted-foreground">{bot.company}</div>
+          <div className={cn("truncate", typographyStyles.navTitle)}>{bot.name}</div>
+          <div className={cn("truncate", typographyStyles.meta)}>{bot.company}</div>
         </div>
       </div>
 
@@ -70,8 +84,8 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
               <BotIcon className="h-6 w-6" />
             </div>
-            <h3 className="text-base font-semibold">This bot is inactive</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h3 className={typographyStyles.cardTitle}>This bot is inactive</h3>
+            <p className={cn("mt-1", typographyStyles.bodyMuted)}>
               This bot isn't accepting messages right now.
             </p>
           </div>
@@ -79,11 +93,16 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
 
         {messages.length === 0 && !isInactive && (
           <div className="mx-auto flex max-w-md flex-col items-center text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-elegant">
+            <div
+              className={cn(
+                "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl shadow-elegant",
+                theme.botAccentClass,
+              )}
+            >
               <BotIcon className="h-6 w-6" />
             </div>
-            <h3 className="text-base font-semibold">Chat with {bot.name}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h3 className={typographyStyles.cardTitle}>Chat with {bot.name}</h3>
+            <p className={cn("mt-1", typographyStyles.bodyMuted)}>
               Trained on {bot.company}'s knowledge. Ask anything to get started.
             </p>
           </div>
@@ -91,11 +110,16 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
 
         <div className="mx-auto flex max-w-3xl flex-col gap-4">
           {messages.map((m) => (
-            <MessageBubble key={m.id} message={m} />
+            <MessageBubble key={m.id} message={m} botAccentClass={theme.botAccentClass} />
           ))}
           {typing && (
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-primary-foreground">
+              <div
+                className={cn(
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+                  theme.botAccentClass,
+                )}
+              >
                 <BotIcon className="h-4 w-4" />
               </div>
               <div className="flex items-center gap-1 rounded-2xl bg-muted px-4 py-3">
@@ -128,7 +152,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
             type="submit"
             size="icon"
             disabled={!input.trim() || typing || isInactive}
-            className="h-11 w-11 shrink-0 rounded-full bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-105 disabled:opacity-50"
+            className={cn("h-11 w-11 shrink-0 rounded-full", theme.buttonClass)}
           >
             <Send className="h-4 w-4" />
           </Button>
@@ -138,16 +162,14 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
   );
 }
 
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({ message, botAccentClass }: { message: Message; botAccentClass: string }) {
   const isUser = message.role === "user";
   return (
     <div className={cn("flex items-start gap-3", isUser && "flex-row-reverse")}>
       <div
         className={cn(
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isUser
-            ? "bg-secondary text-secondary-foreground"
-            : "bg-gradient-brand text-primary-foreground",
+          isUser ? "bg-secondary text-secondary-foreground" : botAccentClass,
         )}
       >
         {isUser ? <User className="h-4 w-4" /> : <BotIcon className="h-4 w-4" />}

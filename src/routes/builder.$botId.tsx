@@ -26,7 +26,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { getBot, upsertBot, uid, type Bot, type BotStatus } from "@/lib/bots";
+import {
+  BOT_THEME_OPTIONS,
+  BOT_TONE_OPTIONS,
+  DEFAULT_BOT_THEME,
+  DEFAULT_BOT_TONE,
+  getBot,
+  getBotThemeOption,
+  upsertBot,
+  uid,
+  type Bot,
+  type BotStatus,
+  type BotThemeColor,
+  type BotTone,
+} from "@/lib/bots";
+import { cn } from "@/lib/utils";
+import {
+  brandStyles,
+  controlStyles,
+  interactionStyles,
+  statusStyles,
+  surfaceStyles,
+  typographyStyles,
+} from "@/lib/visual-styles";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/builder/$botId")({
@@ -44,13 +66,25 @@ function Builder() {
   const [docName, setDocName] = useState("");
   const [docText, setDocText] = useState("");
   const [status, setStatus] = useState<BotStatus>("active");
+  const [tone, setTone] = useState<BotTone>(DEFAULT_BOT_TONE);
+  const [themeColor, setThemeColor] = useState<BotThemeColor>(DEFAULT_BOT_THEME);
   const [dragging, setDragging] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const hasUnsavedChanges =
-    isNew && Boolean(name.trim() || company.trim() || docName || docText || status !== "active");
+    isNew &&
+    Boolean(
+      name.trim() ||
+      company.trim() ||
+      docName ||
+      docText ||
+      status !== "active" ||
+      tone !== DEFAULT_BOT_TONE ||
+      themeColor !== DEFAULT_BOT_THEME,
+    );
   const canSave = isNew || hasUnsavedChanges;
+  const theme = getBotThemeOption(themeColor);
 
   useEffect(() => {
     if (isNew) return;
@@ -126,6 +160,8 @@ function Builder() {
       updatedAt: Date.now(),
       messages: [],
       status,
+      tone,
+      themeColor,
     };
     upsertBot(bot);
     toast.success(isNew ? "Chatbot created!" : "Chatbot updated");
@@ -141,30 +177,32 @@ function Builder() {
             variant="ghost"
             size="sm"
             onClick={requestLeave}
-            className="-ml-2 h-auto shrink-0 px-2 py-1 text-muted-foreground hover:bg-transparent hover:text-foreground"
+            className={cn("-ml-2 h-auto shrink-0 px-2 py-1", interactionStyles.quietButton)}
             aria-label={isNew ? "Back to dashboard" : "Back to bot overview"}
           >
             <ArrowLeft className="h-5 w-5" />
             {isNew ? "Dashboard" : "Bot overview"}
           </Button>
           <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
+            <div
+              className={`flex h-8 w-8 items-center justify-center rounded-lg ${brandStyles.icon}`}
+            >
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="truncate font-semibold">New chatbot</span>
+            <span className={cn("truncate", typographyStyles.navTitle)}>New chatbot</span>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Build your chatbot</h1>
-          <p className="mt-2 text-muted-foreground">
+          <h1 className={typographyStyles.pageTitle}>Build your chatbot</h1>
+          <p className={cn("mt-2", typographyStyles.bodyMuted)}>
             Give it a name and connect the knowledge it needs to answer.
           </p>
         </div>
 
-        <Card className="p-6 shadow-soft sm:p-8">
+        <Card className={`p-6 ${surfaceStyles.card} sm:p-8`}>
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">Chatbot name</Label>
@@ -186,9 +224,64 @@ function Builder() {
                 onChange={(e) => setCompany(e.target.value)}
                 rows={2}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className={typographyStyles.meta}>
                 Used in the chat intro: “Trained on Acme Studio's knowledge.”
               </p>
+            </div>
+
+            <div className={`${surfaceStyles.softPanel} px-4 py-4`}>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <div className={typographyStyles.panelTitle}>Customization</div>
+                  <p className={cn("mt-1", typographyStyles.meta)}>Included in Bots' friend</p>
+                </div>
+                <span className={controlStyles.pill}>Bots' friend</span>
+              </div>
+
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label>Tone of voice</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {BOT_TONE_OPTIONS.map((option) => (
+                      <Button
+                        key={option.value}
+                        type="button"
+                        variant={tone === option.value ? "default" : "outline"}
+                        className={cn("justify-center", tone === option.value && "shadow-soft")}
+                        onClick={() => setTone(option.value)}
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Color</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {BOT_THEME_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        aria-label={option.label}
+                        onClick={() => setThemeColor(option.value)}
+                        className={cn(
+                          controlStyles.swatchButton,
+                          themeColor === option.value &&
+                            "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+                        )}
+                      >
+                        <span className={cn(controlStyles.swatch, option.swatchClass)} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={controlStyles.previewPanel}>
+                  <span className="font-medium text-foreground">Preview:</span> {theme.label} theme
+                  with a {tone} tone of voice.
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -206,19 +299,24 @@ function Builder() {
                   if (file) handleFile(file);
                 }}
                 onClick={() => fileRef.current?.click()}
-                className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all ${
+                className={`flex cursor-pointer flex-col items-center justify-center gap-2 ${surfaceStyles.dashedDropzone} ${
                   dragging
                     ? "border-primary bg-accent"
                     : "border-border hover:border-primary hover:bg-accent/40"
                 }`}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
+                <div
+                  className={cn(
+                    "flex h-12 w-12 items-center justify-center rounded-xl shadow-soft",
+                    theme.botAccentClass,
+                  )}
+                >
                   <Upload className="h-5 w-5" />
                 </div>
-                <div className="text-sm font-medium">
+                <div className={typographyStyles.panelTitle}>
                   {docName ? "Replace file" : "Click or drag a .txt file"}
                 </div>
-                <div className="text-xs text-muted-foreground">Max 2MB</div>
+                <div className={typographyStyles.meta}>Max 2MB</div>
                 <input
                   ref={fileRef}
                   type="file"
@@ -232,11 +330,13 @@ function Builder() {
               </div>
 
               {docName && (
-                <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted/40 px-3 py-2 text-sm">
+                <div
+                  className={`mt-2 flex items-center justify-between text-sm ${surfaceStyles.fileRow}`}
+                >
                   <div className="flex min-w-0 items-center gap-2">
                     <FileText className="h-4 w-4 shrink-0 text-primary" />
                     <span className="truncate">{docName}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
+                    <span className={cn("shrink-0", typographyStyles.meta)}>
                       ({docText.length.toLocaleString()} chars)
                     </span>
                   </div>
@@ -247,7 +347,7 @@ function Builder() {
                       setDocName("");
                       setDocText("");
                     }}
-                    className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    className={cn("rounded p-1", interactionStyles.destructiveIconButton)}
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -255,11 +355,11 @@ function Builder() {
               )}
             </div>
 
-            <div className="rounded-lg border bg-muted/40 px-4 py-3">
+            <div className={`${surfaceStyles.softPanel} px-4 py-3`}>
               <div className="mb-3 flex items-start justify-between gap-4">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium">Status</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className={typographyStyles.panelTitle}>Status</span>
+                  <span className={typographyStyles.meta}>
                     Control whether this bot accepts messages.
                   </span>
                 </div>
@@ -267,22 +367,20 @@ function Builder() {
                   id="status"
                   checked={status === "active"}
                   onCheckedChange={(checked) => setStatus(checked ? "active" : "inactive")}
-                  className="data-[state=checked]:bg-emerald-500 data-[state=unchecked]:bg-amber-500"
+                  className={`${statusStyles.active.switch} ${statusStyles.inactive.switch}`}
                 />
               </div>
 
               <div
                 className={`rounded-lg border px-4 py-3 text-sm ${
-                  status === "active"
-                    ? "border-emerald-500/20 bg-emerald-500/10"
-                    : "border-amber-500/20 bg-amber-500/10"
+                  status === "active" ? statusStyles.active.panel : statusStyles.inactive.panel
                 }`}
               >
                 <div className="flex items-center gap-1.5 font-medium">
                   <Power className="h-3.5 w-3.5" />
                   {status === "active" ? "Active" : "Inactive"}
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className={cn("mt-1", typographyStyles.meta)}>
                   {status === "active"
                     ? "This bot can answer messages in test chat and embedded widget."
                     : "This bot will be saved, but won't accept messages until you activate it."}
@@ -291,11 +389,11 @@ function Builder() {
             </div>
 
             <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-xs text-muted-foreground">
+              <div className={typographyStyles.meta}>
                 {!isNew && (
                   <span
                     className={`inline-flex items-center gap-1.5 ${
-                      hasUnsavedChanges ? "text-amber-600" : "text-emerald-600"
+                      hasUnsavedChanges ? statusStyles.inactive.text : statusStyles.active.text
                     }`}
                   >
                     {hasUnsavedChanges ? (
@@ -315,7 +413,7 @@ function Builder() {
                   type="submit"
                   size="lg"
                   disabled={!canSave}
-                  className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
+                  className={brandStyles.ctaButton}
                 >
                   Create chatbot
                 </Button>

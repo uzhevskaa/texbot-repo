@@ -1,6 +1,56 @@
+import { botThemeStyles } from "@/lib/visual-styles";
+
 export type Message = { id: string; role: "user" | "assistant"; content: string; ts: number };
 
 export type BotStatus = "active" | "inactive";
+export type BotTone = "friendly" | "professional";
+export type BotThemeColor = "violet" | "blue" | "emerald" | "amber" | "rose";
+
+export const BOT_TONE_OPTIONS = [
+  { value: "friendly", label: "Friendly" },
+  { value: "professional", label: "Professional" },
+] satisfies Array<{ value: BotTone; label: string }>;
+
+export const BOT_THEME_OPTIONS = [
+  {
+    value: "violet",
+    label: "Indigo",
+    ...botThemeStyles.violet,
+  },
+  {
+    value: "blue",
+    label: "Cyan",
+    ...botThemeStyles.blue,
+  },
+  {
+    value: "emerald",
+    label: "Slate",
+    ...botThemeStyles.emerald,
+  },
+  {
+    value: "amber",
+    label: "Orchid",
+    ...botThemeStyles.amber,
+  },
+  {
+    value: "rose",
+    label: "Ink",
+    ...botThemeStyles.rose,
+  },
+] satisfies Array<{
+  value: BotThemeColor;
+  label: string;
+  swatchClass: string;
+  botAccentClass: string;
+  buttonClass: string;
+}>;
+
+export const DEFAULT_BOT_TONE: BotTone = "friendly";
+export const DEFAULT_BOT_THEME: BotThemeColor = "violet";
+
+export function getBotThemeOption(themeColor: string | undefined) {
+  return BOT_THEME_OPTIONS.find((option) => option.value === themeColor) ?? BOT_THEME_OPTIONS[0];
+}
 
 export type Bot = {
   id: string;
@@ -12,6 +62,8 @@ export type Bot = {
   updatedAt: number;
   messages: Message[];
   status: BotStatus;
+  tone: BotTone;
+  themeColor: BotThemeColor;
 };
 
 const KEY = "chatbot-builder:bots";
@@ -63,6 +115,7 @@ export function simulateAnswer(bot: Bot, question: string): string {
   }
 
   const q = question.toLowerCase();
+  const isProfessional = bot.tone === "professional";
   const stop = new Set([
     "the",
     "a",
@@ -106,7 +159,9 @@ export function simulateAnswer(bot: Bot, question: string): string {
     .filter(Boolean);
 
   if (!sentences.length) {
-    return `Hi! I'm ${bot.name}, the assistant for ${bot.company}. I don't have any knowledge documents yet — try uploading one in the builder.`;
+    return isProfessional
+      ? `Hello. I'm ${bot.name}, the assistant for ${bot.company}. No knowledge base has been added yet.`
+      : `Hi! I'm ${bot.name}, the assistant for ${bot.company}. I don't have any knowledge documents yet.`;
   }
 
   const scored = sentences.map((s) => {
@@ -122,11 +177,15 @@ export function simulateAnswer(bot: Bot, question: string): string {
 
   const greetings = ["hi", "hello", "hey", "yo", "greetings"];
   if (keywords.length === 0 || greetings.some((g) => q.trim().startsWith(g))) {
-    return `Hi there! I'm ${bot.name}, ${bot.company}'s assistant. Ask me anything about our company.`;
+    return isProfessional
+      ? `Hello. I'm ${bot.name}, ${bot.company}'s assistant. Ask me anything about ${bot.company}.`
+      : `Hi there! I'm ${bot.name}, ${bot.company}'s assistant. Ask me anything about ${bot.company}.`;
   }
 
   if (!top.length) {
-    return `Hmm, I couldn't find that in ${bot.company}'s knowledge base. Could you rephrase, or ask something more specific?`;
+    return isProfessional
+      ? `I couldn't find that in ${bot.company}'s knowledge base. Please rephrase or ask something more specific.`
+      : `I couldn't find that in ${bot.company}'s knowledge base. Could you rephrase, or ask something more specific?`;
   }
   return top.join(" ");
 }

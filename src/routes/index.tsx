@@ -31,8 +31,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { loadBots, deleteBot, upsertBot, type Bot } from "@/lib/bots";
+import { deleteBot, getBotThemeOption, loadBots, upsertBot, type Bot } from "@/lib/bots";
+import { cn } from "@/lib/utils";
+import {
+  brandStyles,
+  controlStyles,
+  interactionStyles,
+  statusStyles,
+  surfaceStyles,
+  typographyStyles,
+} from "@/lib/visual-styles";
 import { toast } from "sonner";
+
+const BOTS_FRIEND_UNTIL = "24/08";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -91,23 +102,30 @@ function Dashboard() {
       <header className="border-b bg-card/60 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl ${brandStyles.icon}`}
+            >
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="truncate text-lg font-semibold tracking-tight">Texbot</span>
+            <span className={cn("truncate", typographyStyles.brand)}>Texbot</span>
           </Link>
-          <Link to="/builder" className="shrink-0">
-            <Button className="bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110">
-              <Plus className="mr-1 h-4 w-4" /> Create new chatbot
-            </Button>
-          </Link>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className={`${controlStyles.pill} px-3 font-medium`}>
+              Bots' friend until {BOTS_FRIEND_UNTIL}
+            </span>
+            <Link to="/builder" className="shrink-0">
+              <Button className={brandStyles.button}>
+                <Plus className="mr-1 h-4 w-4" /> Create new chatbot
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8 flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Your chatbots</h1>
-          <p className="text-muted-foreground">
+          <h1 className={typographyStyles.pageTitle}>Your chatbots</h1>
+          <p className={typographyStyles.bodyMuted}>
             Build, train, and embed AI assistants powered by your own knowledge base.
           </p>
         </div>
@@ -133,20 +151,21 @@ function Dashboard() {
 
 function EmptyState() {
   return (
-    <Card className="flex flex-col items-center justify-center border-dashed bg-card px-6 py-16 text-center shadow-soft">
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-elegant">
+    <Card
+      className={`flex flex-col items-center justify-center border-dashed bg-card px-6 py-16 text-center ${surfaceStyles.card}`}
+    >
+      <div
+        className={`mb-5 flex h-16 w-16 items-center justify-center rounded-2xl ${brandStyles.emptyIcon}`}
+      >
         <BotIcon className="h-7 w-7" />
       </div>
-      <h2 className="text-xl font-semibold">No chatbots yet</h2>
-      <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+      <h2 className={typographyStyles.sectionTitle}>No chatbots yet</h2>
+      <p className={cn("mt-2 max-w-sm", typographyStyles.bodyMuted)}>
         Create your first AI assistant. Upload a .txt knowledge file, give it a name, and you're
         ready in seconds.
       </p>
       <Link to="/builder" className="mt-6">
-        <Button
-          size="lg"
-          className="bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110"
-        >
+        <Button size="lg" className={brandStyles.button}>
           <Plus className="mr-1 h-4 w-4" /> Create new chatbot
         </Button>
       </Link>
@@ -167,16 +186,21 @@ function BotCard({
   const updatedDate = formatDateTime(bot.updatedAt);
   const messageCount = bot.messages?.length ?? 0;
   const isActive = bot.status === "active";
+  const theme = getBotThemeOption(bot.themeColor);
   return (
-    <Card className="flex min-w-0 flex-col gap-5 border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elegant">
+    <Card
+      className={`flex min-w-0 flex-col gap-5 border bg-card p-5 ${surfaceStyles.card} transition-all hover:-translate-y-0.5 hover:shadow-elegant`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-soft">
+          <div
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${surfaceStyles.card} ${theme.botAccentClass}`}
+          >
             <BotIcon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="truncate font-semibold">{bot.name}</h3>
-            <p className="truncate text-xs text-muted-foreground">{bot.company}</p>
+            <h3 className={cn("truncate", typographyStyles.cardTitle)}>{bot.name}</h3>
+            <p className={cn("truncate", typographyStyles.meta)}>{bot.company}</p>
           </div>
         </div>
         <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -185,7 +209,7 @@ function BotCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground"
+                className={cn("h-8 w-8 shrink-0", interactionStyles.iconButton)}
                 aria-label="Open chatbot actions"
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -236,7 +260,7 @@ function BotCard({
         </AlertDialog>
       </div>
 
-      <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+      <div className={cn("flex flex-col gap-2", typographyStyles.meta)}>
         <div className="flex min-w-0 items-center justify-between gap-3">
           <span className="inline-flex min-w-0 items-center gap-2">
             <FileText className="h-3.5 w-3.5 shrink-0" />
@@ -249,10 +273,12 @@ function BotCard({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+      <div className={cn("flex items-center justify-between gap-3", typographyStyles.meta)}>
         <span>Updated {updatedDate}</span>
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-medium ${isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}
+          className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 ${typographyStyles.metaStrong} ${
+            isActive ? statusStyles.active.badge : statusStyles.inactive.badge
+          }`}
         >
           <Power className="h-3 w-3" />
           {isActive ? "Active" : "Inactive"}
@@ -261,10 +287,7 @@ function BotCard({
 
       <div className="mt-auto flex gap-2">
         <Link to="/bot/$botId" params={{ botId: bot.id }} className="flex-1">
-          <Button
-            variant="default"
-            className="w-full bg-gradient-brand text-primary-foreground shadow-soft transition-[filter] hover:brightness-110"
-          >
+          <Button variant="default" className={`w-full ${brandStyles.button}`}>
             <BotIcon className="mr-1 h-4 w-4" /> Manage
           </Button>
         </Link>
