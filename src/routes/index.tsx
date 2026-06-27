@@ -90,7 +90,7 @@ function Dashboard() {
           </Link>
           <Link to="/builder">
             <Button className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]">
-              <Plus className="mr-1 h-4 w-4" /> Create chatbot
+              <Plus className="mr-1 h-4 w-4" /> Create new chatbot
             </Button>
           </Link>
         </div>
@@ -139,7 +139,7 @@ function EmptyState() {
           size="lg"
           className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
         >
-          <Plus className="mr-1 h-4 w-4" /> Create chatbot
+          <Plus className="mr-1 h-4 w-4" /> Create new chatbot
         </Button>
       </Link>
     </Card>
