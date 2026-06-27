@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Bot as BotIcon, Plus, MessageSquare, Code2, Trash2, Sparkles, Power } from "lucide-react";
+import {
+  Bot as BotIcon,
+  Plus,
+  MessageSquare,
+  Code2,
+  Trash2,
+  Sparkles,
+  Power,
+  Pencil,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { loadBots, deleteBot, type Bot } from "@/lib/bots";
@@ -10,7 +19,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Botforge — Build AI chatbots in minutes" },
-      { name: "description", content: "No-code chatbot builder. Upload a knowledge file, get an embeddable AI assistant for your site." },
+      {
+        name: "description",
+        content:
+          "No-code chatbot builder. Upload a knowledge file, get an embeddable AI assistant for your site.",
+      },
     ],
   }),
   component: Dashboard,
@@ -77,10 +90,14 @@ function EmptyState() {
       </div>
       <h2 className="text-xl font-semibold">No chatbots yet</h2>
       <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-        Create your first AI assistant. Upload a .txt knowledge file, give it a name, and you're live in seconds.
+        Create your first AI assistant. Upload a .txt knowledge file, give it a name, and you're
+        live in seconds.
       </p>
       <Link to="/builder" className="mt-6">
-        <Button size="lg" className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]">
+        <Button
+          size="lg"
+          className="bg-gradient-brand text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
+        >
           <Plus className="mr-1 h-4 w-4" /> Create chatbot
         </Button>
       </Link>
@@ -90,7 +107,9 @@ function EmptyState() {
 
 function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string, name: string) => void }) {
   const date = new Date(bot.createdAt).toLocaleDateString(undefined, {
-    month: "short", day: "numeric", year: "numeric",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
   const isActive = bot.status === "active";
   return (
@@ -105,18 +124,30 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string, name: str
             <p className="truncate text-xs text-muted-foreground">{bot.company}</p>
           </div>
         </div>
-        <button
-          onClick={() => onDelete(bot.id, bot.name)}
-          className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-          aria-label="Delete chatbot"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        <div className="flex shrink-0 items-center gap-1 opacity-0 transition-all group-hover:opacity-100">
+          <Link
+            to="/builder/$botId"
+            params={{ botId: bot.id }}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            aria-label="Edit chatbot"
+          >
+            <Pencil className="h-4 w-4" />
+          </Link>
+          <button
+            onClick={() => onDelete(bot.id, bot.name)}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            aria-label="Delete chatbot"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
         <span>Created {date}</span>
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-medium ${isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-medium ${isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}
+        >
           <Power className="h-3 w-3" />
           {isActive ? "Active" : "Inactive"}
         </span>
@@ -124,7 +155,10 @@ function BotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string, name: str
 
       <div className="mt-auto flex gap-2">
         <Link to="/chat/$botId" params={{ botId: bot.id }} className="flex-1">
-          <Button variant="default" className="w-full bg-gradient-brand text-primary-foreground shadow-soft">
+          <Button
+            variant="default"
+            className="w-full bg-gradient-brand text-primary-foreground shadow-soft"
+          >
             <MessageSquare className="mr-1 h-4 w-4" /> Chat
           </Button>
         </Link>

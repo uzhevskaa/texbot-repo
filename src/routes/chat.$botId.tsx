@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Settings, Code2 } from "lucide-react";
+import { ArrowLeft, Pencil, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatPanel } from "@/components/ChatPanel";
 import { getBot, type Bot } from "@/lib/bots";
@@ -40,7 +40,7 @@ function ChatPage() {
           <div className="flex items-center gap-2">
             <Link to="/builder/$botId" params={{ botId: bot.id }}>
               <Button variant="ghost" size="sm">
-                <Settings className="mr-1 h-4 w-4" /> Edit
+                <Pencil className="mr-1 h-4 w-4" /> Edit
               </Button>
             </Link>
             <Link to="/widget/$botId" params={{ botId: bot.id }}>
