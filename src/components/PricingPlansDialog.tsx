@@ -86,11 +86,11 @@ export function PricingPlansDialog({ open, onOpenChange }: Props) {
 
                 <div className="mt-6 flex-1">
                   <p className="text-sm font-medium text-foreground">What&apos;s included:</p>
-                  <ul className="mt-3 grid gap-1.5">
+                  <ul className="mt-3 grid gap-0">
                     {plan.included.map((item) => (
                       <li
                         key={item}
-                        className="flex min-h-10 items-center gap-3 text-sm leading-5 text-foreground"
+                        className="flex min-h-6 items-center gap-2.5 text-xs leading-4 text-foreground"
                       >
                         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
                           <Check className="h-3.5 w-3.5" />

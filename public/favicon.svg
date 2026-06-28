@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brand" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+      <stop stop-color="oklch(0.49 0.11 220)"/>
+      <stop offset="1" stop-color="oklch(0.62 0.09 205)"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 6V2H8" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 6H6C4.895 6 4 6.895 4 8V16C4 16.674 3.999 17.5 4 19C4 21.5 5.5 20.5 8 18H18C19.105 18 20 17.105 20 16V8C20 6.895 19.105 6 18 6Z" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2 12H4" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 12H22" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15 11V13" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9 11V13" stroke="url(#brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

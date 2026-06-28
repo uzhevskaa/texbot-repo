@@ -98,19 +98,21 @@ function Dashboard() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/60 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
-          <Link to="/" className="flex min-w-0 items-center gap-2">
+          <Link to="/" className="flex shrink-0 items-center gap-2">
             <div
-              className={`flex h-9 w-9 items-center justify-center rounded-xl ${brandStyles.icon}`}
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${brandStyles.icon}`}
             >
               <TexbotLogoMark className="h-4.5 w-4.5" />
             </div>
-            <span className={cn("truncate", typographyStyles.brand)}>Texbot</span>
+            <span className={cn("hidden truncate sm:inline", typographyStyles.brand)}>Texbot</span>
           </Link>
-          <div className="flex shrink-0 items-center gap-3">
-            <SubscriptionBadge showUntil className="px-3 font-medium" />
+          <div className="flex min-w-0 shrink items-center justify-end gap-3">
+            <SubscriptionBadge showUntil className="max-w-[42vw] px-3 font-medium sm:max-w-none" />
             <Link to="/builder" className="shrink-0">
               <Button className={brandStyles.button}>
-                <Plus className="mr-1 h-4 w-4" /> Create new chatbot
+                <Plus className="h-4 w-4 sm:mr-1" />
+                <span className="sm:hidden">New</span>
+                <span className="hidden sm:inline">Create new chatbot</span>
               </Button>
             </Link>
           </div>

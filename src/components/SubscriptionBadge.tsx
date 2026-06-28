@@ -15,6 +15,14 @@ export function SubscriptionBadge({ showUntil = false, className, interactive = 
   const [open, setOpen] = useState(false);
 
   const badgeLabel = `Bots' friend${showUntil ? ` until ${BOTS_FRIEND_UNTIL}` : ""}`;
+  const badgeContent = showUntil ? (
+    <>
+      <span className="truncate sm:hidden">Bots&apos; friend</span>
+      <span className="hidden truncate sm:inline">{badgeLabel}</span>
+    </>
+  ) : (
+    <span className="truncate">{badgeLabel}</span>
+  );
 
   return (
     <>
@@ -27,15 +35,21 @@ export function SubscriptionBadge({ showUntil = false, className, interactive = 
                 onClick={() => setOpen(true)}
                 className={cn(
                   controlStyles.pill,
-                  "cursor-pointer transition-colors hover:border-primary/20 hover:bg-accent/60 hover:text-foreground",
+                  "inline-flex min-w-0 max-w-full truncate transition-colors hover:border-primary/20 hover:bg-accent/60 hover:text-foreground",
                   className,
                 )}
               >
-                {badgeLabel}
+                {badgeContent}
               </button>
             ) : (
-              <span className={cn(controlStyles.pill, "cursor-default", className)}>
-                {badgeLabel}
+              <span
+                className={cn(
+                  controlStyles.pill,
+                  "inline-flex min-w-0 max-w-full truncate",
+                  className,
+                )}
+              >
+                {badgeContent}
               </span>
             )}
           </TooltipTrigger>
