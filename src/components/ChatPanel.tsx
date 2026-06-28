@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Send, Bot as BotIcon, User } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  getKnowledgeBaseQuestions,
   getBotThemeOption,
   simulateAnswer,
   type Bot,
@@ -27,6 +29,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const isInactive = bot.status === "inactive";
   const theme = getBotThemeOption(bot.themeColor);
+  const suggestedQuestions = getKnowledgeBaseQuestions(bot);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -36,8 +39,8 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
     inputRef.current?.focus();
   }, []);
 
-  function send() {
-    const text = input.trim();
+  function send(question?: string) {
+    const text = (question ?? input).trim();
     if (!text || typing || isInactive) return;
     const userMsg: Message = { id: uid(), role: "user", content: text, ts: Date.now() };
     const next = [...messages, userMsg];
@@ -70,7 +73,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
             theme.botAccentClass,
           )}
         >
-          <BotIcon className="h-4 w-4" />
+          <TexbotLogoMark className="h-4 w-4" />
         </div>
         <div className="min-w-0">
           <div className={cn("truncate", typographyStyles.navTitle)}>{bot.name}</div>
@@ -82,7 +85,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
         {isInactive && (
           <div className="mx-auto mb-6 flex max-w-md flex-col items-center text-center">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-              <BotIcon className="h-6 w-6" />
+              <TexbotLogoMark className="h-6 w-6" />
             </div>
             <h3 className={typographyStyles.cardTitle}>This bot is inactive</h3>
             <p className={cn("mt-1", typographyStyles.bodyMuted)}>
@@ -99,12 +102,25 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
                 theme.botAccentClass,
               )}
             >
-              <BotIcon className="h-6 w-6" />
+              <TexbotLogoMark className="h-6 w-6" />
             </div>
             <h3 className={typographyStyles.cardTitle}>Chat with {bot.name}</h3>
             <p className={cn("mt-1", typographyStyles.bodyMuted)}>
               Trained on {bot.company}'s knowledge. Ask anything to get started.
             </p>
+            <div className="mt-5 flex w-full flex-col gap-2">
+              {suggestedQuestions.map((question) => (
+                <button
+                  key={question}
+                  type="button"
+                  onClick={() => send(question)}
+                  className="rounded-xl border bg-background px-4 py-3 text-left text-sm text-foreground shadow-soft transition-colors hover:border-primary/30 hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-70"
+                  disabled={typing}
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -120,7 +136,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
                   theme.botAccentClass,
                 )}
               >
-                <BotIcon className="h-4 w-4" />
+                <TexbotLogoMark className="h-4 w-4" />
               </div>
               <div className="flex items-center gap-1 rounded-2xl bg-muted px-4 py-3">
                 <span className="typing-dot h-2 w-2 rounded-full bg-muted-foreground" />
@@ -154,7 +170,7 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
             disabled={!input.trim() || typing || isInactive}
             className={cn("h-11 w-11 shrink-0 rounded-full", theme.buttonClass)}
           >
-            <Send className="h-4 w-4" />
+            <ArrowUp className="h-4 w-4" />
           </Button>
         </form>
       </div>
@@ -165,19 +181,21 @@ export function ChatPanel({ bot, persist = true, className }: Props) {
 function MessageBubble({ message, botAccentClass }: { message: Message; botAccentClass: string }) {
   const isUser = message.role === "user";
   return (
-    <div className={cn("flex items-start gap-3", isUser && "flex-row-reverse")}>
+    <div className={cn("flex items-start gap-3", isUser && "justify-end")}>
+      {!isUser && (
+        <div
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+            botAccentClass,
+          )}
+        >
+          <TexbotLogoMark className="h-4 w-4" />
+        </div>
+      )}
       <div
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isUser ? "bg-secondary text-secondary-foreground" : botAccentClass,
-        )}
-      >
-        {isUser ? <User className="h-4 w-4" /> : <BotIcon className="h-4 w-4" />}
-      </div>
-      <div
-        className={cn(
-          "max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed",
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+          "max-w-[80%] whitespace-pre-wrap px-4 py-3 text-sm leading-relaxed",
+          isUser ? "text-foreground" : "rounded-2xl bg-muted text-foreground",
         )}
       >
         {message.content}

@@ -1,9 +1,9 @@
 export const brandStyles = {
   icon: "bg-gradient-brand text-primary-foreground shadow-soft",
   button:
-    "bg-gradient-brand text-primary-foreground shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+    "bg-gradient-brand text-primary-foreground shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   ctaButton:
-    "bg-gradient-brand text-primary-foreground shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-elegant active:translate-y-0 active:brightness-100",
+    "bg-gradient-brand text-primary-foreground shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-elegant active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   emptyIcon: "bg-gradient-brand text-primary-foreground shadow-elegant",
 };
 
@@ -12,31 +12,31 @@ export const botThemeStyles = {
     swatchClass: "bg-gradient-to-br from-indigo-500 to-blue-600",
     botAccentClass: "bg-gradient-to-br from-indigo-500 to-blue-600 text-white",
     buttonClass:
-      "bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+      "bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   },
   blue: {
     swatchClass: "bg-gradient-to-br from-cyan-500 to-sky-600",
     botAccentClass: "bg-gradient-to-br from-cyan-500 to-sky-600 text-white",
     buttonClass:
-      "bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+      "bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   },
   emerald: {
     swatchClass: "bg-gradient-to-br from-slate-500 to-slate-700",
     botAccentClass: "bg-gradient-to-br from-slate-500 to-slate-700 text-white",
     buttonClass:
-      "bg-gradient-to-br from-slate-500 to-slate-700 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+      "bg-gradient-to-br from-slate-500 to-slate-700 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   },
   amber: {
     swatchClass: "bg-gradient-to-br from-fuchsia-500 to-violet-600",
     botAccentClass: "bg-gradient-to-br from-fuchsia-500 to-violet-600 text-white",
     buttonClass:
-      "bg-gradient-to-br from-fuchsia-500 to-violet-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+      "bg-gradient-to-br from-fuchsia-500 to-violet-600 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   },
   rose: {
     swatchClass: "bg-gradient-to-br from-zinc-600 to-slate-800",
     botAccentClass: "bg-gradient-to-br from-zinc-600 to-slate-800 text-white",
     buttonClass:
-      "bg-gradient-to-br from-zinc-600 to-slate-800 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100",
+      "bg-gradient-to-br from-zinc-600 to-slate-800 text-white shadow-soft transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-interactive active:translate-y-0 active:brightness-100 disabled:bg-none disabled:bg-[var(--color-disabled)] disabled:text-[var(--color-disabled-foreground)] disabled:opacity-100",
   },
 };
 
@@ -77,7 +77,7 @@ export const controlStyles = {
   pill: "rounded-full border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground",
   previewPanel: "rounded-lg border bg-background px-4 py-3 text-sm text-muted-foreground",
   swatchButton:
-    "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background shadow-soft transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-foreground/15 hover:shadow-interactive active:translate-y-0",
+    "relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background shadow-soft transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-foreground/15 hover:shadow-interactive active:translate-y-0",
   swatch: "h-7 w-7 rounded-full",
   iconTile:
     "flex h-10 w-10 items-center justify-center rounded-lg border bg-muted/70 text-muted-foreground shadow-soft",

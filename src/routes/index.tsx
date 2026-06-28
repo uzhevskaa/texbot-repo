@@ -1,12 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Bot as BotIcon,
   Plus,
   MessageSquare,
   Code2,
   Trash2,
-  Sparkles,
   Power,
   MoreHorizontal,
   FileText,
@@ -14,6 +12,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SubscriptionBadge } from "@/components/SubscriptionBadge";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,15 +35,12 @@ import { deleteBot, getBotThemeOption, loadBots, upsertBot, type Bot } from "@/l
 import { cn } from "@/lib/utils";
 import {
   brandStyles,
-  controlStyles,
   interactionStyles,
   statusStyles,
   surfaceStyles,
   typographyStyles,
 } from "@/lib/visual-styles";
 import { toast } from "sonner";
-
-const BOTS_FRIEND_UNTIL = "24/08";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -105,14 +102,12 @@ function Dashboard() {
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-xl ${brandStyles.icon}`}
             >
-              <Sparkles className="h-4 w-4" />
+              <TexbotLogoMark className="h-4.5 w-4.5" />
             </div>
             <span className={cn("truncate", typographyStyles.brand)}>Texbot</span>
           </Link>
           <div className="flex shrink-0 items-center gap-3">
-            <span className={`${controlStyles.pill} px-3 font-medium`}>
-              Bots' friend until {BOTS_FRIEND_UNTIL}
-            </span>
+            <SubscriptionBadge showUntil className="px-3 font-medium" />
             <Link to="/builder" className="shrink-0">
               <Button className={brandStyles.button}>
                 <Plus className="mr-1 h-4 w-4" /> Create new chatbot
@@ -157,7 +152,7 @@ function EmptyState() {
       <div
         className={`mb-5 flex h-16 w-16 items-center justify-center rounded-2xl ${brandStyles.emptyIcon}`}
       >
-        <BotIcon className="h-7 w-7" />
+        <TexbotLogoMark className="h-7 w-7" />
       </div>
       <h2 className={typographyStyles.sectionTitle}>No chatbots yet</h2>
       <p className={cn("mt-2 max-w-sm", typographyStyles.bodyMuted)}>
@@ -196,7 +191,7 @@ function BotCard({
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${surfaceStyles.card} ${theme.botAccentClass}`}
           >
-            <BotIcon className="h-5 w-5" />
+            <TexbotLogoMark className="h-5 w-5" />
           </div>
           <div className="min-w-0">
             <h3 className={cn("truncate", typographyStyles.cardTitle)}>{bot.name}</h3>
@@ -288,7 +283,7 @@ function BotCard({
       <div className="mt-auto flex gap-2">
         <Link to="/bot/$botId" params={{ botId: bot.id }} className="flex-1">
           <Button variant="default" className={`w-full ${brandStyles.button}`}>
-            <BotIcon className="mr-1 h-4 w-4" /> Manage
+            Manage
           </Button>
         </Link>
         <Link

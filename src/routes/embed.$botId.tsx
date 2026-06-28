@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { MessageCircle } from "lucide-react";
 import { ChatPanel } from "@/components/ChatPanel";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import { DEFAULT_BOT_THEME, DEFAULT_BOT_TONE, getBot, type Bot } from "@/lib/bots";
 import { brandStyles } from "@/lib/visual-styles";
 
@@ -62,7 +62,7 @@ function EmbedPage() {
           <div
             className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${brandStyles.icon}`}
           >
-            <MessageCircle className="h-6 w-6" />
+            <TexbotLogoMark className="h-6 w-6" />
           </div>
           <h1 className="text-base font-semibold">Chatbot not available</h1>
           <p className="mt-1 text-sm text-muted-foreground">

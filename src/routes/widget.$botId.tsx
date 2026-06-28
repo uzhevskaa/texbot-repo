@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Copy, Check, Sparkles, MessageCircle, Code2 } from "lucide-react";
+import { ArrowLeft, Copy, Check, MessageCircle, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmbedWidget } from "@/components/EmbedWidget";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import { getBot, getBotThemeOption, type Bot } from "@/lib/bots";
 import { cn } from "@/lib/utils";
 import {
@@ -46,7 +47,6 @@ function WidgetPage() {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const backToDashboard = from === "dashboard";
   const theme = getBotThemeOption(bot.themeColor);
-
   const payload = btoa(
     unescape(
       encodeURIComponent(
@@ -129,7 +129,7 @@ ${embedUrlLines},
                 theme.botAccentClass,
               )}
             >
-              <Sparkles className="h-4 w-4" />
+              <TexbotLogoMark className="h-4 w-4" />
             </div>
             <span className={cn("truncate", typographyStyles.navTitle)}>Embed widget</span>
           </div>
@@ -217,9 +217,9 @@ ${embedUrlLines},
           </div>
 
           <Card
-            className={`flex min-w-0 self-start items-start gap-4 border-dashed p-5 ${surfaceStyles.card}`}
+            className={`flex min-w-0 self-start items-start gap-5 border-dashed p-5 ${surfaceStyles.card}`}
           >
-            <div className={controlStyles.iconTile}>
+            <div className={cn(controlStyles.iconTile, "h-12 w-12 shrink-0")}>
               <MessageCircle className="h-5 w-5" />
             </div>
             <div className={typographyStyles.body}>

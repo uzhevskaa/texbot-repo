@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Bot as BotIcon,
   CalendarDays,
   Code2,
   FileText,
@@ -16,6 +15,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { SubscriptionBadge } from "@/components/SubscriptionBadge";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -229,7 +230,7 @@ function BotOverview() {
                 theme.botAccentClass,
               )}
             >
-              <BotIcon className="h-4 w-4" />
+              <TexbotLogoMark className="h-4 w-4" />
             </div>
             <span className={cn("truncate", typographyStyles.navTitle)}>Bot overview</span>
           </div>
@@ -260,6 +261,7 @@ function BotOverview() {
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <SubscriptionBadge showUntil className="px-3 font-medium" />
             <Link to="/chat/$botId" params={{ botId: bot.id }}>
               <Button className={theme.buttonClass}>
                 <MessageCircle className="mr-1 h-4 w-4" />
@@ -429,7 +431,7 @@ function BotOverview() {
                   <div className={typographyStyles.panelTitle}>Customization</div>
                   <p className={cn("mt-1", typographyStyles.meta)}>Included in Bots' friend</p>
                 </div>
-                <span className={controlStyles.pill}>Bots' friend</span>
+                <SubscriptionBadge interactive={false} />
               </div>
 
               <div className="grid gap-4">
@@ -465,7 +467,7 @@ function BotOverview() {
                         className={cn(
                           controlStyles.swatchButton,
                           draftThemeColor === option.value &&
-                            "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+                            "border-foreground bg-background ring-2 ring-foreground ring-offset-2 ring-offset-background after:absolute after:h-2 after:w-2 after:rounded-full after:bg-foreground",
                         )}
                       >
                         <span className={cn(controlStyles.swatch, option.swatchClass)} />

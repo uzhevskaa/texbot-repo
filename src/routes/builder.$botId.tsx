@@ -1,17 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Upload,
-  FileText,
-  Sparkles,
-  X,
-  CheckCircle2,
-  AlertCircle,
-  Power,
-} from "lucide-react";
+import { ArrowLeft, Upload, FileText, X, CheckCircle2, AlertCircle, Power } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubscriptionBadge } from "@/components/SubscriptionBadge";
+import { TexbotLogoMark } from "@/components/TexbotLogoMark";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
@@ -187,7 +180,7 @@ function Builder() {
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-lg ${brandStyles.icon}`}
             >
-              <Sparkles className="h-4 w-4" />
+              <TexbotLogoMark className="h-4 w-4" />
             </div>
             <span className={cn("truncate", typographyStyles.navTitle)}>New chatbot</span>
           </div>
@@ -235,7 +228,7 @@ function Builder() {
                   <div className={typographyStyles.panelTitle}>Customization</div>
                   <p className={cn("mt-1", typographyStyles.meta)}>Included in Bots' friend</p>
                 </div>
-                <span className={controlStyles.pill}>Bots' friend</span>
+                <SubscriptionBadge />
               </div>
 
               <div className="grid gap-4">
@@ -268,7 +261,7 @@ function Builder() {
                         className={cn(
                           controlStyles.swatchButton,
                           themeColor === option.value &&
-                            "ring-2 ring-foreground ring-offset-2 ring-offset-background",
+                            "border-foreground bg-background ring-2 ring-foreground ring-offset-2 ring-offset-background after:absolute after:h-2 after:w-2 after:rounded-full after:bg-foreground",
                         )}
                       >
                         <span className={cn(controlStyles.swatch, option.swatchClass)} />

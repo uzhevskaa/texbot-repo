@@ -108,6 +108,66 @@ export function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
+export function getKnowledgeBaseQuestions(bot: Bot): string[] {
+  const topics = extractKnowledgeTopics(bot.documentText);
+
+  if (!topics.length) {
+    return [
+      `What should I know about ${bot.company}?`,
+      `What can you help me with?`,
+      `Summarize the knowledge base.`,
+    ];
+  }
+
+  const questions = [
+    `What does the knowledge base say about ${topics[0]}?`,
+    topics[1] ? `Can you explain ${topics[1]}?` : `Summarize the key points.`,
+    topics[2] ? `What are the important details about ${topics[2]}?` : `What should I know first?`,
+  ];
+
+  return questions.slice(0, 3);
+}
+
+function extractKnowledgeTopics(text: string): string[] {
+  const stop = new Set([
+    "about",
+    "after",
+    "also",
+    "and",
+    "are",
+    "can",
+    "company",
+    "for",
+    "from",
+    "has",
+    "have",
+    "how",
+    "into",
+    "our",
+    "that",
+    "the",
+    "their",
+    "this",
+    "with",
+    "your",
+  ]);
+  const words = text
+    .replace(/[^\w\s-]/g, " ")
+    .split(/\s+/)
+    .map((word) => word.trim())
+    .filter((word) => word.length > 3 && !stop.has(word.toLowerCase()));
+
+  const seen = new Set<string>();
+  return words
+    .filter((word) => {
+      const key = word.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
+}
+
 /** Naive simulated AI: search document for sentences containing query keywords. */
 export function simulateAnswer(bot: Bot, question: string): string {
   if (bot.status === "inactive") {
