@@ -335,7 +335,7 @@ function BotOverview() {
             </div>
           </Card>
 
-          <Card className={`min-w-0 self-start p-6 ${surfaceStyles.card}`}>
+          <Card className={`flex min-w-0 flex-col p-6 ${surfaceStyles.card}`}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <h2 className={typographyStyles.sectionTitle}>Status</h2>
