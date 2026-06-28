@@ -100,7 +100,7 @@ function Dashboard() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <Link to="/" className="flex shrink-0 items-center gap-2">
             <div
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${brandStyles.icon}`}
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${brandStyles.icon}`}
             >
               <TexbotLogoMark className="h-4.5 w-4.5" />
             </div>
@@ -152,7 +152,7 @@ function EmptyState() {
       className={`flex flex-col items-center justify-center border-dashed bg-card px-6 py-16 text-center ${surfaceStyles.card}`}
     >
       <div
-        className={`mb-5 flex h-16 w-16 items-center justify-center rounded-2xl ${brandStyles.emptyIcon}`}
+        className={`mb-5 flex h-16 w-16 items-center justify-center rounded-full ${brandStyles.emptyIcon}`}
       >
         <TexbotLogoMark className="h-7 w-7" />
       </div>
@@ -191,7 +191,7 @@ function BotCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${surfaceStyles.card} ${theme.botAccentClass}`}
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${surfaceStyles.card} ${theme.botAccentClass}`}
           >
             <TexbotLogoMark className="h-5 w-5" />
           </div>
